@@ -1,10 +1,11 @@
-
+#ifndef _MATRIX_H_
+#define _MATRIX_H_
 #include <iostream>
 #include "TVector.h"
 
 using namespace std;
 
-template<typename ValType>
+template<class ValType>
 class TMatrix: public TVector
 {
 public:
@@ -29,3 +30,11 @@ public:
 private:
 
 };
+
+template<class ValType>
+TMatrix<ValType>::TMatrix(int size): size(size)
+{
+
+}
+
+#endif
