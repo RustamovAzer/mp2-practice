@@ -10,10 +10,13 @@ template<class ValType>
 class TVector
 {
 protected:
+    
     int size;
     ValType* elems;
     int startIndex;
+    
 public:
+
     TVector(int size = 10, int startIndfex = 0);
     TVector(const TVector<ValType>& _v);
     ~TVector();
@@ -30,18 +33,38 @@ public:
     ValType Length()const;
     int GetSize()const;
     int GetStartIndex()const;
-    friend ostream& operator<<(ostream&, const TVector&);
-    friend istream& operator>>(istream&, TVector&);
+    friend ostream & operator<<(ostream & out, const TVector<class ValType> & _v)
+    {
+        if (_v.size == 0)return out;
+        for (size_t i = 0; i < _v.size; i++)
+        {
+            out << _v.elems[i];
+        }
+    }
+    friend istream & operator>>(istream & in, TVector<class ValType>& _v)
+    {
+        if (_v.size == 0)return in;
+        for (size_t i = 0; i < _v.size; i++)
+        {
+            in >> _v.elems[i];
+        }
+    }
+
 };
 
 template<class ValType>
-TVector<ValType>::TVector(int size, int startIndfex) :size(size), startIndex(startIndex)
+TVector<ValType>::TVector(int _size, int _startIndfex)
 {
+    size = _size;
+    startIndex = _startIndfex;
+    elems = new ValType[size];
 }
 
 template<class ValType>
-TVector<ValType>::TVector(const TVector<ValType>& _v) : size(_v.size), startIndex(startIndex)
+TVector<ValType>::TVector(const TVector<ValType>& _v)
 {
+    size = _v.size;
+    startIndex = _v.startIndfex;
     elems = new ValType[size];
     memcpy(elems, _v.elems, size * sizeof(ValType));
 }
@@ -59,9 +82,15 @@ template<typename ValType>
 TVector<ValType>& TVector<ValType>::operator=(const TVector<ValType>& _v)
 {
     if (elems == _v.elems) throw "Self-assignment";
-    size = _v.size;
-    startIndex = _v.startIndex;
-    memccpy(elems, _v.elems);
+    if (size != _v.size)
+    {
+        size = _v.size;
+    }
+    if (startIndex != _v.startIndex)
+    {
+        startIndex = _v.startIndex;
+    }
+    memcpy(elems, _v.elems, size * sizeof(ValType));
     return *this;
 }
 
@@ -153,6 +182,7 @@ TVector<ValType> TVector<ValType>::operator-(const TVector &_v)
 template<typename ValType>
 ValType TVector<ValType>::operator*(const TVector &_v)
 {
+    if (size == _v.size) throw "Unequal sizes";
     ValType res = elems[0]*_v.elems[0];
     if (size == _v.size)
     {
@@ -192,24 +222,4 @@ int TVector<ValType>::GetStartIndex() const
 {
     return startIndex;
 }
-
-ostream & operator<<(ostream & oustr, const TVector<class ValType>& _v)
-{
-    if (_v.size == 0)return oustr;
-    for (size_t i = 0; i < _v.size; i++)
-    {
-        oustr << _v.elems[i];
-    }
-}
-
-
-istream & operator>>(istream & instr, TVector<class ValType>& _v)
-{
-    if (_v.size == 0)return instr;
-    for (size_t i = 0; i < _v.size; i++)
-    {
-        instr >> _v.elems[i];
-    }
-}
-
 #endif
