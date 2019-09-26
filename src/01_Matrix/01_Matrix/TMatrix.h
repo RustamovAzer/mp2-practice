@@ -1,124 +1,224 @@
-#ifndef _MATRIX_H_
-#define _MATRIX_H_
+#ifndef _TMATRIX_H
+#define _TMATRIX_H
+
 #include <iostream>
 #include "TVector.h"
 
-using namespace std;
-
-template<class ValType>
-class TMatrix: public TVector<TVector<ValType> >
+template<typename ValType>
+class TMatrix : public TVector<TVector<ValType>>
 {
 public:
-    TMatrix(int size = 10);
+    explicit TMatrix(size_t _size = 10, size_t transpose = 0);
     TMatrix(const TMatrix&);
     TMatrix(const TVector<TVector<ValType> >&);
     ~TMatrix();
-    //TMatrix& operator=(const TMatrix&);
-    //bool operator==(const TMatrix&)const;
-    //bool operator!=(const TMatrix&)const;
-    //TMatrix operator+(ValType);
-    //TMatrix operator-(ValType);
-    //TMatrix operator*(ValType);
-    //TMatrix operator+(const TMatrix&);
-    //TMatrix operator-(const TMatrix&);
+    bool operator==(const TMatrix&) const;
+    bool operator!=(const TMatrix&) const;
+    TMatrix& operator=(const TMatrix&);
+    TMatrix operator+(ValType);
+    TMatrix operator-(ValType);
+    TMatrix operator*(ValType);
+    TMatrix operator+(const TMatrix&);
+    TMatrix operator-(const TMatrix&);
     TMatrix operator*(const TMatrix&);
-    TVector operator*(const TVector&);
-    ValType Det();
-    friend ostream& operator<<(ostream&, const TMatrix&);
-    friend istream& operator>>(istream&, TMatrix&);
+    TVector<ValType> operator*(const TVector<ValType>&);
 
-private:
+    ValType Determinant();
 
+    void Generate();
+
+    friend ostream& operator<<(ostream& out, const TMatrix& _v)
+    {
+        for (size_t i = 0; i < _v.size; i++)
+        {
+            out << _v.elems[i] << "\n";
+        }
+        return out;
+    }
+    friend istream& operator >> (istream& in, TMatrix& temp)
+    {
+        for (size_t i = 0; i < temp.size; i++)
+            in >> temp.elems[i];
+        return in;
+    }
 };
 
-template<class ValType>
-TMatrix<ValType>::TMatrix(int size)
+template<typename ValType>
+TMatrix<ValType>::TMatrix(size_t _size, size_t transpose) : TVector<TVector<ValType> >(_size)
 {
-    elems = new TVector<TVector<ValType> >[size];
-    /*
+    if (transpose == 0)
+        for (size_t i = 0; i < _size; i++)
+            elems[i] = TVector<ValType>(_size - i, i);
+    else
+        for (size_t i = 0; i < _size; i++)
+            elems[i] = TVector<ValType>(i + 1, i);
+}
+
+template<typename ValType>
+TMatrix<ValType>::TMatrix(const TMatrix<ValType>& temp)
+{
+    size = temp.size;
+    elems = new TVector<ValType>[temp.size];
+    for (size_t i = 0; i < temp.size; i++)
+        elems[i] = temp.elems[i];
+}
+
+template<typename ValType>
+TMatrix<ValType>::TMatrix(const TVector<TVector<ValType> >& temp) : TVector<TVector<ValType> >(temp.GetSize())
+{
+    for (size_t i = 0; i < size; i++)
+        if (temp[i].GetSize() != size - i)
+            throw "Невозможно привести матрицы";
     for (size_t i = 0; i < size; i++)
     {
-        this->elems[i] = new TVector<ValType>;
-    }
-    */
-}
-
-template<class ValType>
-TMatrix<ValType>::TMatrix(const TMatrix & _v)
-{
-    if (elems == _v.elems) throw "Self-assignment";
-    if (size != _v.size)
-    {
-        size = _v.size;
-    }
-    if (startIndex != _v.startIndex)
-    {
-        startIndex = _v.startIndex;
-    }
-    for (size_t i = 0; i < size; i++)
-    {
-        elems[i] = _v.elems[i];
+        elems[i] = TVector<ValType>(size - i, i);
+        for (size_t j = 0; j < size - i; j++)
+            elems[i].GetValue(j) = temp.GetValue(i).GetValue(j);
     }
 }
 
-template<class ValType>
-TMatrix<ValType>::TMatrix(const TVector<TVector<ValType> >& _v)
-{
-    if (size != _v.size)
-    {
-        size = _v.size;
-    }
-    if (startIndex != _v.startIndex)
-    {
-        startIndex = _v.startIndex;
-    }
-    for (size_t i = 0; i < size; i++)
-    {
-        elems[i] = _v.elems[i];
-    }
-}
+template<typename ValType>
+TMatrix<ValType>::~TMatrix() {}
 
-template<class ValType>
-TMatrix<ValType>::~TMatrix()
+template<typename ValType>
+bool TMatrix<ValType>::operator==(const TMatrix<ValType>& temp) const
 {
-    if (size>0)
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    for (size_t i = 0; i < temp.size; i++)
     {
-        for (size_t i = 0; i < size; i++) delete elems[i];
-    }
-    delete[] elems;
-}
-
-template<class ValType>
-TMatrix<ValType> TMatrix<ValType>::operator*(const TMatrix & _v)
-{
-    if (size == _v.size) throw "Unequal sizes";
-    TMatrix<ValType>(size) res;
-    /*
-    for (size_t k = 0; i < size; i++)
-    {
-        for (size_t i = 0; i < size; i++)
+        if (elems[i] != temp.elems[i])
         {
-           elems[k][i] = 0;
-           for (size_t j = 0; j < size; j++)
-           {
-               res.elems[k][i] += elems[k][j] * _v[j][i];
-           }
+            return 0;
         }
     }
-       
-    */
-    return //
+    return 1;
 }
 
-/*template<class ValType>
-TVector<ValType> TMatrix<ValType>::operator*(const TVector & _v)
+template<typename ValType>
+bool TMatrix<ValType>::operator!=(const TMatrix<ValType>& temp) const
 {
-    return TVectorr();
-}*/
+    return (!(*this == temp));
+}
 
+template<typename ValType>
+TMatrix<ValType>& TMatrix<ValType>::operator=(const TMatrix<ValType>& temp)
+{
+    if (this != &temp)
+    {
+        if (size != temp.size)
+        {
+            size = temp.size;
+            delete elems;
+            elems = new TVector<ValType>[temp.size];
+        }
+        for (size_t i = 0; i < temp.size; i++)
+            elems[i] = temp.elems[i];
+    }
+    return *this;
+}
 
+template<typename ValType>
+TMatrix<ValType> TMatrix<ValType>::operator+(ValType temp)
+{
+    TMatrix<ValType> rez(*this);
+    for (size_t i = 0; i < rez.size; i++)
+        rez.elems[i] = elems[i] + temp;
+    return rez;
+}
 
+template<typename ValType>
+TMatrix<ValType> TMatrix<ValType>::operator-(ValType temp)
+{
+    TMatrix<ValType> rez(*this);
+    for (size_t i = 0; i < size; i++)
+        rez.elems[i] = rez.elems[i] - temp;
+    return rez;
+}
 
+template<typename ValType>
+TMatrix<ValType> TMatrix<ValType>::operator*(ValType temp)
+{
+    TMatrix<ValType> rez(*this);
+    for (size_t i = 0; i < size; i++)
+        rez.elems[i] = rez.elems[i] * temp;
+    return rez;
+}
 
+template<typename ValType>
+TMatrix<ValType> TMatrix<ValType>::operator+(const TMatrix& temp)
+{
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    TMatrix<ValType> rez(*this);
+    for (size_t i = 0; i < rez.size; i++)
+        rez.elems[i] = elems[i] + temp.elems[i];
+    return rez;
+}
+
+template<typename ValType>
+TMatrix<ValType> TMatrix<ValType>::operator-(const TMatrix& temp)
+{
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    TMatrix<ValType> rez(*this);
+    for (size_t i = 0; i < rez.size; i++)
+        rez.elems[i] = elems[i] - temp.elems[i];
+    return rez;
+}
+
+template<typename ValType>
+TMatrix<ValType> TMatrix<ValType>::operator*(const TMatrix& temp)
+{
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    TMatrix<ValType> rez(*this);
+    for (size_t i = 0; i < rez.size; i++)
+    {
+        size_t cols = 1;
+        size_t si = temp.elems[i].GetStartIndex();
+        for (size_t j = si; j < rez.size; j++)
+        {
+            rez.elems[i][j] = ValType(0);
+            for (size_t k = 0; k < cols; k++)
+                rez.elems[i][j] = rez.elems[i][j] + elems[i][k + i] * temp.elems[k + i][j];
+            cols++;
+        }
+    }
+    return rez;
+}
+
+template<typename ValType>
+TVector<ValType> TMatrix<ValType>::operator*(const TVector<ValType>& temp)
+{
+    size_t _size = temp.GetSize();
+    if (size != _size)
+        throw "Размерности не совпадают";
+    TVector<ValType> rez(_size);
+    for (size_t i = 0; i < _size; i++)
+    {
+        rez[i] = ValType(0);
+        size_t si = elems[i].GetStartIndex();
+        for (size_t j = si; j < _size; j++)
+            rez[i] = rez[i] + elems[i][j] * temp[j];
+    }
+    return rez;
+}
+
+template<typename ValType>
+ValType TMatrix<ValType>::Determinant()
+{
+    ValType res = 1;
+    for (size_t i = 0; i < size; i++)
+        res = res * elems[i][i];
+    return res;
+}
+
+template<typename ValType>
+void TMatrix<ValType>::Generate()
+{
+    for (size_t i = 0; i < size; i++)
+        elems[i].GenerateVector();
+}
 
 #endif

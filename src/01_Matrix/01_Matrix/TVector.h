@@ -1,225 +1,278 @@
-#ifndef _TVECTOR_H_/
-#define _TVECTOR_H_
+#ifndef _TVECTOR_H
+#define _TVECTOR_H
+
 #include <iostream>
-#include <cmath>
-#include <cstring>
+#include <ctime>
+#include <iomanip>
 
 using namespace std;
 
-template<class ValType>
+template<typename ValType>
 class TVector
 {
 protected:
-    
-    int size;
+    size_t size, startIndex;
     ValType* elems;
-    int startIndex;
-    
+
 public:
-
-    TVector(int size = 10, int startIndfex = 0);
-    TVector(const TVector<ValType>& _v);
+    explicit TVector(size_t _size = 2, size_t _startIndex = 0);
+    TVector(const TVector&);
     ~TVector();
-    bool operator==(const TVector& _v) const;
-    bool operator!=(const TVector& _v) const;
-    TVector& operator=(const TVector& _v);
-    TVector operator+(ValType _x);
-    TVector operator-(ValType _x);
-    TVector operator*(ValType _x);
-    TVector operator+(const TVector& _v);
-    TVector operator-(const TVector& _v);
-    ValType operator*(const TVector&);
-    ValType& operator[](int index);
-    ValType Length()const;
-    int GetSize()const;
-    int GetStartIndex()const;
-    friend ostream & operator<<(ostream & out, const TVector<class ValType> & _v)
-    {
-        if (_v.size == 0)return out;
-        for (size_t i = 0; i < _v.size; i++)
-        {
-            out << _v.elems[i];
-        }
-    }
-    friend istream & operator>>(istream & in, TVector<class ValType>& _v)
-    {
-        if (_v.size == 0)return in;
-        for (size_t i = 0; i < _v.size; i++)
-        {
-            in >> _v.elems[i];
-        }
-    }
 
+    bool operator==(const TVector&) const;
+    bool operator!=(const TVector&) const;
+
+    TVector operator+(ValType);
+    TVector operator-(ValType);
+    TVector operator*(ValType);
+
+    TVector operator+(const TVector&);
+    TVector operator-(const TVector&);
+
+    ValType operator*(const TVector&);
+    ValType Length() const;
+
+    size_t GetSize() const;
+    size_t GetStartIndex() const;
+    void SetStartIndex(size_t);
+
+    TVector& Transpose();
+    ValType& GetValue(size_t);
+    const ValType& GetValue(size_t) const;
+    ValType& operator[](size_t);
+    const ValType& operator[](size_t) const;
+    TVector& operator=(const TVector&);
+
+    void GenerateVector();
+
+    friend ostream& operator<<(ostream& out, const TVector& _v)
+    {
+        if (_v.size == 0)
+            return out;
+        out << "| ";
+        for (size_t i = 0; i < _v.startIndex; i++)
+            out << setw(6) << setprecision(4) << right << ValType(0) << "|";
+        for (size_t i = 0; i < _v.size; i++)
+            out << setw(6) << setprecision(4) << right << _v.elems[i] << "|";
+        return out;
+    }
+    friend istream& operator >> (istream& in, TVector& temp)
+    {
+        if (temp.size == 0)
+            return in;
+        for (size_t i = 0; i < temp.size; i++)
+        {
+            cout << "Введите " << i + 1 << " элемент: ";
+            in >> temp.elems[i];
+        }
+        return in;
+    }
 };
 
-template<class ValType>
-TVector<ValType>::TVector(int _size, int _startIndfex)
+///////////////////////////////////////////////////////////////////////////////
+
+
+template<typename ValType>
+TVector<ValType>::TVector(size_t _size, size_t _startIndex)
 {
+    srand((unsigned)time(0));
     size = _size;
-    startIndex = _startIndfex;
     elems = new ValType[size];
+    startIndex = _startIndex;
 }
 
-template<class ValType>
-TVector<ValType>::TVector(const TVector<ValType>& _v)
+template<typename ValType>
+TVector<ValType>::TVector(const TVector& temp)
 {
-    size = _v.size;
-    startIndex = _v.startIndfex;
+    size = temp.size;
     elems = new ValType[size];
-    memcpy(elems, _v.elems, size * sizeof(ValType));
+    memcpy(elems, temp.elems, sizeof(ValType) * size);
+    startIndex = temp.startIndex;
 }
 
-template<class ValType>
+template<typename ValType>
 TVector<ValType>::~TVector()
 {
-    if (size>0)
-    {
-        delete elems[];
-    }
+    if (size > 0)
+        delete[] elems;
 }
 
 template<typename ValType>
-TVector<ValType>& TVector<ValType>::operator=(const TVector<ValType>& _v)
+bool TVector<ValType>::operator==(const TVector& temp) const
 {
-    if (elems == _v.elems) throw "Self-assignment";
-    if (size != _v.size)
-    {
-        size = _v.size;
-    }
-    if (startIndex != _v.startIndex)
-    {
-        startIndex = _v.startIndex;
-    }
-    memcpy(elems, _v.elems, size * sizeof(ValType));
-    return *this;
-}
-
-
-
-template<typename ValType>
-bool TVector<ValType>::operator==(const TVector<ValType>& _v)const
-{
-    if (size == _v.size)
-    {
-        if(!memcmp(elems,_v.elems, size * sizeof(ValType))
-            return true;
-    }
-    return false;
-}
-
-
-
-template<typename ValType>
-bool TVector<ValType>::operator!=(const TVector & _v)const
-{
-
-    if (size != _v.size)
-    {
-        if(memcmp(elems,_v.elems, size * sizeof(ValType))
-        return true;
-    }
-    return false;
-}
-
-template<typename ValType>
-TVector<ValType> TVector<ValType>::operator+(ValType _x)
-{
-    TVector<ValType> tmp = *this;
+    if (size != temp.size)
+        throw "Размерности не совпадают";
     for (size_t i = 0; i < size; i++)
     {
-        tmp.elems[i] += x;
+        if (elems[i] != temp.elems[i])
+        {
+            return false;
+        }
     }
-    return tmp;
+    return true;
 }
+
 template<typename ValType>
-TVector<ValType> TVector<ValType>::operator-(ValType _x)
+bool TVector<ValType>::operator!=(const TVector& temp) const
 {
-    TVector<ValType> tmp = *this;
+    return !(*this == temp);
+}
+
+template<typename ValType>
+TVector<ValType> TVector<ValType>::operator+(ValType temp)
+{
+    TVector<ValType> rez(*this);
     for (size_t i = 0; i < size; i++)
-    {
-        tmp.elems[i] -= x;
-    }
-    return tmp;
+        rez.elems[i] = elems[i] + temp;
+    return rez;
 }
+
 template<typename ValType>
-TVector<ValType> TVector<ValType>::operator*(ValType _x)
+TVector<ValType> TVector<ValType>::operator-(ValType temp)
 {
-    TVector<ValType> tmp = *this;
+    TVector<ValType> rez(*this);
     for (size_t i = 0; i < size; i++)
-    {
-        tmp.elems[i] *= x;
-    }
-    return tmp;
+        rez.elems[i] = rez.elems[i] - temp;
+    return rez;
 }
 
 template<typename ValType>
-TVector<ValType> TVector<ValType>::operator+(const TVector &_v)
+TVector<ValType> TVector<ValType>::operator*(ValType temp)
 {
-    TVector<ValType> tmp = *this;
-    if (size == _v.size)
-    {
-        for (size_t i = 0; i < size; i++)
-        {
-            tmp.elems[i] += _v.elems;
-        }
-    }
-    return tmp;
+    TVector<ValType> rez(*this);
+    for (size_t i = 0; i < size; i++)
+        rez.elems[i] = rez.elems[i] * temp;
+    return rez;
 }
 
 template<typename ValType>
-TVector<ValType> TVector<ValType>::operator-(const TVector &_v)
+TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
-    TVector<ValType> tmp = *this;
-    if (size == _v.size)
-    {
-        for (size_t i = 0; i < size; i++)
-        {
-            tmp.elems[i] -= _v.elems;
-        }
-    }
-    return tmp;
-}
-template<typename ValType>
-ValType TVector<ValType>::operator*(const TVector &_v)
-{
-    if (size == _v.size) throw "Unequal sizes";
-    ValType res = elems[0]*_v.elems[0];
-    if (size == _v.size)
-    {
-        for (size_t i = 1; i < size; i++)
-        {
-            res+= elems[i]*_v.elems;
-        }
-    }
-    return res;
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    TVector<ValType> rez(*this);
+    for (size_t i = 0; i < size; i++)
+        rez.elems[i] = temp.elems[i] + rez.elems[i];
+    return rez;
 }
 
 template<typename ValType>
-ValType & TVector<ValType>::operator[](int index)
+TVector<ValType> TVector<ValType>::operator-(const TVector& temp)
 {
-    if (index < 0) || (index >= size) throw "Incorrect index";
-    return elems[index];
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    TVector<ValType> rez(*this);
+    for (size_t i = 0; i < size; i++)
+        rez.elems[i] = rez.elems[i] - temp.elems[i];
+    return rez;
+}
+
+template<typename ValType>
+ValType TVector<ValType>::operator*(const TVector& temp)
+{
+    if (size != temp.size)
+        throw "Размерности не совпадают";
+    ValType rez = 0;
+    for (size_t i = 0; i < size; i++)
+        rez = rez + elems[i] * temp.elems[i];
+    return rez;
 }
 
 template<typename ValType>
 ValType TVector<ValType>::Length() const
 {
-    ValType sqres = elems[0] * elems[0];
-    for (size_t i = 1; i < size; i++)
-    {
-        sqres += elems[i] * elems[i];
-    }
-    ValType res = sqrt(sqres)
-    return res;
+    ValType rez = 0;
+    for (size_t i = 0; i < size; i++)
+        rez += elems[i] * elems[i];
+    return sqrt(rez);
 }
-template<class ValType>
-int TVector<ValType>::GetSize() const
+
+template<typename ValType>
+size_t TVector<ValType>::GetSize() const
 {
     return size;
 }
-template<class ValType>
-int TVector<ValType>::GetStartIndex() const
+
+template<typename ValType>
+size_t TVector<ValType>::GetStartIndex() const
 {
     return startIndex;
 }
+
+template<typename ValType>
+ValType& TVector<ValType>::operator[](size_t index)
+{
+    if ((index - startIndex) >= size)
+        throw "Выход за размерность вектора";
+    return elems[index - startIndex];
+}
+
+template<typename ValType>
+const ValType& TVector<ValType>::operator[](size_t index) const
+{
+    if ((index - startIndex) >= size)
+        throw "Выход за размерность вектора";
+    return elems[index - startIndex];
+}
+
+template<typename ValType>
+ValType& TVector<ValType>::GetValue(size_t index)
+{
+    if (index >= size)
+        throw "Выход за размерность вектора";
+    return elems[index];
+}
+
+template<typename ValType>
+const ValType& TVector<ValType>::GetValue(size_t index) const
+{
+    if (index >= size)
+        throw "Выход за размерность вектора";
+    return elems[index];
+}
+
+template<typename ValType>
+TVector<ValType>& TVector<ValType>::operator=(const TVector& temp)
+{
+    if (this != &temp)
+    {
+        if (size != temp.size)
+        {
+            size = temp.size;
+            delete elems;
+            elems = new ValType[size];
+        }
+        startIndex = temp.startIndex;
+        memcpy(elems, temp.elems, sizeof(ValType) * size);
+    }
+    return *this;
+}
+
+template<typename ValType>
+void TVector<ValType>::GenerateVector()
+{
+    ValType lb = 1, rb = 100;
+    for (size_t i = 0; i < size; i++)
+        elems[i] = lb + ((ValType)rand() / RAND_MAX) * (rb - lb);
+}
+
+template<typename ValType>
+void TVector<ValType>::SetStartIndex(size_t si)
+{
+    startIndex = si;
+}
+
+template<typename ValType>
+TVector<ValType>& TVector<ValType>::Transpose()
+{
+    for (size_t i = 0; i < (size / 2); i++)
+    {
+        ValType tmp = elems[i];
+        elems[i] = elems[size - 1 - i];
+        elems[size - 1 - i] = tmp;
+    }
+    return *this;
+}
+
+;
 #endif
