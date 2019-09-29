@@ -8,7 +8,7 @@ template<typename ValType>
 class TMatrix : public TVector<TVector<ValType>>
 {
 public:
-    explicit TMatrix(size_t _size = 10, size_t transpose = 0);
+    explicit TMatrix(size_t _size = 10);
     TMatrix(const TMatrix&);
     TMatrix(const TVector<TVector<ValType> >&);
     ~TMatrix();
@@ -25,7 +25,6 @@ public:
 
     ValType Determinant();
 
-    void Generate();
 
     friend ostream& operator<<(ostream& out, const TMatrix& _v)
     {
@@ -44,14 +43,10 @@ public:
 };
 
 template<typename ValType>
-TMatrix<ValType>::TMatrix(size_t _size, size_t transpose) : TVector<TVector<ValType> >(_size)
+TMatrix<ValType>::TMatrix(size_t _size) : TVector<TVector<ValType> >(_size)
 {
-    if (transpose == 0)
-        for (size_t i = 0; i < _size; i++)
-            elems[i] = TVector<ValType>(_size - i, i);
-    else
-        for (size_t i = 0; i < _size; i++)
-            elems[i] = TVector<ValType>(i + 1, i);
+    for (int i = 0; i < _size; i++)
+        elems[i] = TVector<ValType>(_size - i, i);
 }
 
 template<typename ValType>
@@ -67,13 +62,10 @@ template<typename ValType>
 TMatrix<ValType>::TMatrix(const TVector<TVector<ValType> >& temp) : TVector<TVector<ValType> >(temp.GetSize())
 {
     for (size_t i = 0; i < size; i++)
-        if (temp[i].GetSize() != size - i)
-            throw "Невозможно привести матрицы";
-    for (size_t i = 0; i < size; i++)
     {
         elems[i] = TVector<ValType>(size - i, i);
-        for (size_t j = 0; j < size - i; j++)
-            elems[i].GetValue(j) = temp.GetValue(i).GetValue(j);
+        for (size_t j = i; j < size; j++)
+            elems[i][j] = temp[i][j];
     }
 }
 
@@ -208,17 +200,12 @@ TVector<ValType> TMatrix<ValType>::operator*(const TVector<ValType>& temp)
 template<typename ValType>
 ValType TMatrix<ValType>::Determinant()
 {
-    ValType res = 1;
+    ValType res;
+    res = ValType(1);
     for (size_t i = 0; i < size; i++)
         res = res * elems[i][i];
     return res;
 }
 
-template<typename ValType>
-void TMatrix<ValType>::Generate()
-{
-    for (size_t i = 0; i < size; i++)
-        elems[i].GenerateVector();
-}
 
 #endif

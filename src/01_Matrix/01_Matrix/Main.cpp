@@ -6,232 +6,72 @@ using namespace std;
 int main()
 {
     setlocale(LC_ALL, "Russian");
-    TVector<double> vectorA(3), vectorB(2), vectorC(1), vectorRez(3);
-    TMatrix<double> matrixA(3), matrixB(3), matrixC(2), matrixRez(3);
-    TVector <TVector<double>> VVectorA(3), VVectorB(2);
+    unsigned size;
 
-    for (int i = 0; i < 3; i++)
-    {
-        TVector<double> temp(3 - i);
-        for (int j = i; j < 3; j++)
-            temp[j - i] = (double)(i + j + 1);
-        VVectorA[i] = temp;
-    }
+    cout << endl << "Введите размер матриц: ";
+    cin >> size;
 
-    vectorA.GenerateVector();
-    matrixA.Generate();
-    matrixB.Generate();
-    matrixC.Generate();
-    matrixRez.Generate();
+    TMatrix<double> tm1(size), tm2(size), tm3, tm4;
+    TVector<double> tv(size);
+    double tmp;
 
+    cout << "Введите первую матрицу: " << endl;
+    cin >> tm1;
+    cout << "Введите вторую матрицу: " << endl;
+    cin >> tm2;
+    cout << "Введите третью матрицу (size = 7): " << endl;
+    cin >> tm2;
+    cout << "Введите четвертую матрицу (size = 7): " << endl;
+    cin >> tm2;
+    cout << "Введите число:" << endl;
+    cin >> tmp;
+    cout << "Введите вектор: " << endl;
+    cin >> tv;
 
-    cout << "Matrix = Vector<Vector>A(3): " << endl;
+    cout << "(matrix1 == matrix2): " << (tm1 == tm2) << endl;
+    cout << "(matrix1 != matrix2): " << (tm1 != tm2) << endl;
+    cout << "(matrix1 == matrix3): " << (tm1 == tm3) << endl;
+
+    cout << "matrix1 + value:" << endl;
+    cout << (tm1 + tmp) << endl;
+    cout << "matrix1 - value:" << endl;
+    cout << (tm1 - tmp) << endl;
+    cout << "matrix1 * value:" << endl;
+    cout << (tm1 * tmp) << endl;
+
+    cout << "matrix1 + matrix2:" << endl;
+    cout << tm1 + tm2 << endl;
+    cout << "matrix1 - matrix2:" << endl;
+    cout << tm1 - tm2 << endl;
+    cout << "matrix1 * matrix2:" << endl;
+    cout << tm1 * tm2 << endl;
+
+    cout << "matrix1 * vector:" << endl;
+    cout << tm1 * tmp << endl;
+
+    cout << "matrix3 = matrix1:" << endl;
+    cout << (tm3 = tm1) << endl;
+
+    cout << "Determinant(matrix1): " << endl;
+    cout << tm1.Determinant() << endl;
     try
     {
-        matrixRez = VVectorA;
-        cout << matrixRez;
-
+        tm1 * tm4;
     }
     catch (char* msg)
     {
-        cout << "Ошибка:" <<msg<<endl;
+        cout << "Ошибка: " << msg;
     }
 
-    cout << "Matrix = Vector<Vector>B(2): ";
     try
     {
-        matrixRez = VVectorB;
-        cout << matrixRez;
-
+        tm1[73];
     }
     catch (char* msg)
     {
-        cout << "Ошибка:" << msg << endl;
+        cout << "Ошибка: " << msg;
     }
 
-    cout << "D = B:" << endl;
-    matrixRez = matrixB;
-
-    cout << "D" << endl << matrixRez << "B" << endl << matrixB;
-
-    cout << "Проверка на (A == B): ";
-    try
-    {
-        if (matrixA == matrixB)
-            cout << "True" << endl;
-        else
-            cout << "False" << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Проверка на (D == B): ";
-    try
-    {
-        if (matrixRez == matrixB)
-            cout << "True" << endl;
-        else
-            cout << "False" << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Проверка на (A == C): ";
-    try
-    {
-        if (matrixA == matrixC)
-            cout << "True" << endl;
-        else
-            cout << "False" << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-
-    cout << "Проверка на равенство матриц (A != B): ";
-    try
-    {
-        if (matrixA != matrixB)
-            cout << "True" << endl;
-        else
-            cout << "False" << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Проверка на равенство матриц (D != B): ";
-    try
-    {
-        if (matrixRez != matrixB)
-            cout << "True" << endl;
-        else
-            cout << "False" << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Проверка на равенство матриц (A != C): ";
-    try
-    {
-        if (matrixA != matrixC)
-            cout << "True" << endl;
-        else
-            cout << "False" << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Сложение матриц (A + B):" << endl;
-    try
-    {
-        matrixRez = matrixA + matrixB;
-        cout << matrixRez;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Сложение матриц (A + C): ";
-    try
-    {
-        matrixRez = matrixA + matrixC;
-        cout << matrixRez;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Разность матриц (A - B): " << endl;
-    try
-    {
-        matrixRez = matrixA - matrixB;
-        cout << matrixRez;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Разность матриц (A - C): ";
-    try
-    {
-        matrixRez = matrixA - matrixC;
-        cout << matrixRez;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Умножение матриц (A * B): " << endl;
-    try
-    {
-        matrixRez = matrixA * matrixB;
-        cout << matrixRez;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Умножение матриц (A * C): ";
-    try
-    {
-        matrixRez = matrixA * matrixC;
-        cout << matrixRez;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "A + 5:" << endl;
-    matrixRez = matrixA + 5;
-    cout << matrixRez;
-
-    cout << "A - 5:" << endl;
-    matrixRez = matrixA - 5;
-    cout << matrixRez;
-
-    cout << "A * 5:" << endl;
-    matrixRez = matrixA * 5;
-    cout << matrixRez;
-
-    cout << "Умножение матрицы на вектор (A * vectorB):" << endl;
-    try
-    {
-        vectorRez = matrixA * vectorA;
-        cout << vectorRez << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-    cout << "Умножение матрицы на вектор (A * vectorB): ";
-    try
-    {
-        vectorRez = matrixA * vectorB;
-        cout << vectorRez << endl;
-    }
-    catch (char* msg)
-    {
-        cout << "Ошибка:" << msg << endl;
-    }
-
-    cout << "Детерминант матрицы A: " << matrixA.Determinant() << endl;
+    system("pause");
 
 }

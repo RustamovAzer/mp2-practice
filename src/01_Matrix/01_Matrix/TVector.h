@@ -2,7 +2,6 @@
 #define _TVECTOR_H
 
 #include <iostream>
-#include <ctime>
 #include <iomanip>
 
 using namespace std;
@@ -22,6 +21,8 @@ public:
     bool operator==(const TVector&) const;
     bool operator!=(const TVector&) const;
 
+    TVector& operator=(const TVector&);
+
     TVector operator+(ValType);
     TVector operator-(ValType);
     TVector operator*(ValType);
@@ -37,13 +38,10 @@ public:
     void SetStartIndex(size_t);
 
     TVector& Transpose();
-    ValType& GetValue(size_t);
-    const ValType& GetValue(size_t) const;
     ValType& operator[](size_t);
     const ValType& operator[](size_t) const;
-    TVector& operator=(const TVector&);
+    
 
-    void GenerateVector();
 
     friend ostream& operator<<(ostream& out, const TVector& _v)
     {
@@ -75,7 +73,6 @@ public:
 template<typename ValType>
 TVector<ValType>::TVector(size_t _size, size_t _startIndex)
 {
-    srand((unsigned)time(0));
     size = _size;
     elems = new ValType[size];
     startIndex = _startIndex;
@@ -101,7 +98,7 @@ template<typename ValType>
 bool TVector<ValType>::operator==(const TVector& temp) const
 {
     if (size != temp.size)
-        throw "Размерности не совпадают";
+        return false;
     for (size_t i = 0; i < size; i++)
     {
         if (elems[i] != temp.elems[i])
@@ -121,10 +118,10 @@ bool TVector<ValType>::operator!=(const TVector& temp) const
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(ValType temp)
 {
-    TVector<ValType> rez(*this);
+    TVector<ValType> res(*this);
     for (size_t i = 0; i < size; i++)
-        rez.elems[i] = elems[i] + temp;
-    return rez;
+        res.elems[i] = elems[i] + temp;
+    return res;
 }
 
 template<typename ValType>
@@ -150,10 +147,10 @@ TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
     if (size != temp.size)
         throw "Размерности не совпадают";
-    TVector<ValType> rez(*this);
+    TVector<ValType> res(*this);
     for (size_t i = 0; i < size; i++)
-        rez.elems[i] = temp.elems[i] + rez.elems[i];
-    return rez;
+        res.elems[i] = temp.elems[i] + res.elems[i];
+    return res;
 }
 
 template<typename ValType>
@@ -172,19 +169,16 @@ ValType TVector<ValType>::operator*(const TVector& temp)
 {
     if (size != temp.size)
         throw "Размерности не совпадают";
-    ValType rez = 0;
+    ValType res = 0;
     for (size_t i = 0; i < size; i++)
-        rez = rez + elems[i] * temp.elems[i];
-    return rez;
+        res += elems[i] * temp.elems[i];
+    return res;
 }
 
 template<typename ValType>
 ValType TVector<ValType>::Length() const
 {
-    ValType rez = 0;
-    for (size_t i = 0; i < size; i++)
-        rez += elems[i] * elems[i];
-    return sqrt(rez);
+    return sqrt((*this) * (*this));
 }
 
 template<typename ValType>
@@ -216,44 +210,19 @@ const ValType& TVector<ValType>::operator[](size_t index) const
 }
 
 template<typename ValType>
-ValType& TVector<ValType>::GetValue(size_t index)
+TMatrix<ValType>& TMatrix<ValType>::operator=(const TMatrix<ValType>& temp)
 {
-    if (index >= size)
-        throw "Выход за размерность вектора";
-    return elems[index];
-}
-
-template<typename ValType>
-const ValType& TVector<ValType>::GetValue(size_t index) const
-{
-    if (index >= size)
-        throw "Выход за размерность вектора";
-    return elems[index];
-}
-
-template<typename ValType>
-TVector<ValType>& TVector<ValType>::operator=(const TVector& temp)
-{
-    if (this != &temp)
+    if (this == &temp)
+        return *this;
+    if (size != temp.size)
     {
-        if (size != temp.size)
-        {
-            size = temp.size;
-            delete elems;
-            elems = new ValType[size];
-        }
-        startIndex = temp.startIndex;
-        memcpy(elems, temp.elems, sizeof(ValType) * size);
+        size = temp.size;
+        delete[] elems;
+        elems = new TVector<ValType>[temp.size];
     }
+    for (int i = 0; i < temp.size; i++)
+        elems[i] = temp.elems[i];
     return *this;
-}
-
-template<typename ValType>
-void TVector<ValType>::GenerateVector()
-{
-    ValType lb = 1, rb = 100;
-    for (size_t i = 0; i < size; i++)
-        elems[i] = lb + ((ValType)rand() / RAND_MAX) * (rb - lb);
 }
 
 template<typename ValType>
