@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include "TMatrix.h"
 
 using namespace std;
@@ -8,24 +8,24 @@ int main()
     setlocale(LC_ALL, "Russian");
     unsigned size;
 
-    cout << endl << "Ââåäèòå ðàçìåð ìàòðèö: ";
+    cout << endl << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†: ";
     cin >> size;
 
     TMatrix<double> tm1(size), tm2(size), tm3, tm4;
     TVector<double> tv(size);
     double tmp;
 
-    cout << "Ââåäèòå ïåðâóþ ìàòðèöó: " << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¿ÐµÑ€Ð²ÑƒÑŽ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñƒ: " << endl;
     cin >> tm1;
-    cout << "Ââåäèòå âòîðóþ ìàòðèöó: " << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð²Ñ‚Ð¾Ñ€ÑƒÑŽ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñƒ: " << endl;
     cin >> tm2;
-    cout << "Ââåäèòå òðåòüþ ìàòðèöó (size = 7): " << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ‚Ñ€ÐµÑ‚ÑŒÑŽ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñƒ (size = 7): " << endl;
     cin >> tm2;
-    cout << "Ââåäèòå ÷åòâåðòóþ ìàòðèöó (size = 7): " << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ‡ÐµÑ‚Ð²ÐµÑ€Ñ‚ÑƒÑŽ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñƒ (size = 7): " << endl;
     cin >> tm2;
-    cout << "Ââåäèòå ÷èñëî:" << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ‡Ð¸ÑÐ»Ð¾:" << endl;
     cin >> tmp;
-    cout << "Ââåäèòå âåêòîð: " << endl;
+    cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð²ÐµÐºÑ‚Ð¾Ñ€: " << endl;
     cin >> tv;
 
     cout << "(matrix1 == matrix2): " << (tm1 == tm2) << endl;
@@ -60,7 +60,7 @@ int main()
     }
     catch (char* msg)
     {
-        cout << "Îøèáêà: " << msg;
+        cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: " << msg;
     }
 
     try
@@ -69,7 +69,7 @@ int main()
     }
     catch (char* msg)
     {
-        cout << "Îøèáêà: " << msg;
+        cout << "ÐžÑˆÐ¸Ð±ÐºÐ°: " << msg;
     }
 
     system("pause");

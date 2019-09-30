@@ -1,4 +1,4 @@
-#ifndef _TVECTOR_H
+п»ї#ifndef _TVECTOR_H
 #define _TVECTOR_H
 
 #include <iostream>
@@ -60,7 +60,7 @@ public:
             return in;
         for (size_t i = 0; i < temp.size; i++)
         {
-            cout << "Введите " << i + 1 << " элемент: ";
+            cout << "Р’РІРµРґРёС‚Рµ " << i + 1 << " СЌР»РµРјРµРЅС‚: ";
             in >> temp.elems[i];
         }
         return in;
@@ -164,7 +164,7 @@ template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
     if ((startIndex + size) != (temp.SetStartIndex + temp.size)
-        throw "Размерности не совпадают";
+        throw "Р Р°Р·РјРµСЂРЅРѕСЃС‚Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚";
     size_t resultsize = (size >= temp.size) ? size : temp.size;
     size_t resultSI = (size >= temp.size) ? startIndex : temp.startIndex;
     TVector<ValType> res(resultsize);
@@ -177,7 +177,7 @@ template<typename ValType>
 TVector<ValType> TVector<ValType>::operator-(const TVector& temp)
 {
     if (size != temp.size)
-        throw "Размерности не совпадают";
+        throw "Р Р°Р·РјРµСЂРЅРѕСЃС‚Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚";
     TVector<ValType> rez(*this);
     for (size_t i = 0; i < size; i++)
         rez.elems[i] = rez.elems[i] - temp.elems[i];
@@ -188,7 +188,7 @@ template<typename ValType>
 ValType TVector<ValType>::operator*(const TVector& temp)
 {
     if (size != temp.size)
-        throw "Размерности не совпадают";
+        throw "Р Р°Р·РјРµСЂРЅРѕСЃС‚Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚";
     ValType res = 0;
     for (size_t i = 0; i < size; i++)
         res += elems[i] * temp.elems[i];
@@ -217,7 +217,7 @@ template<typename ValType>
 ValType& TVector<ValType>::operator[](size_t index)
 {
     if ((index - startIndex) >= size)
-        throw "Выход за размерность вектора";
+        throw "Р’С‹С…РѕРґ Р·Р° СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ РІРµРєС‚РѕСЂР°";
     if ((index >= 0) && (index)) return (ValType)0;
     return elems[index - startIndex];
 }
@@ -226,7 +226,7 @@ template<typename ValType>
 const ValType& TVector<ValType>::operator[](size_t index) const
 {
     if ((index - startIndex) >= size)
-        throw "Выход за размерность вектора";
+        throw "Р’С‹С…РѕРґ Р·Р° СЂР°Р·РјРµСЂРЅРѕСЃС‚СЊ РІРµРєС‚РѕСЂР°";
     if ((index >= 0) && (index)) return (ValType)0;
     return elems[index - startIndex];
 }
