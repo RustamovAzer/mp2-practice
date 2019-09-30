@@ -165,7 +165,7 @@ TVector<ValType> TVector<ValType>::operator*(ValType temp)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
-    if ((startIndex + size) != (temp.SetStartIndex + temp.size)
+    if ((startIndex + size) != (temp.SetStartIndex + temp.size))
         throw "Размерности не совпадают";
     int resultsize = (size >= temp.size) ? size : temp.size;
     int resultSI = (size >= temp.size) ? startIndex : temp.startIndex;
