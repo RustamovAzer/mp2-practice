@@ -96,17 +96,16 @@ bool TMatrix<ValType>::operator!=(const TMatrix<ValType>& temp) const
 template<typename ValType>
 TMatrix<ValType>& TMatrix<ValType>::operator=(const TMatrix<ValType>& temp)
 {
-    if (this != &temp)
+    if (this == &temp)
+        return *this;
+    if (size != temp.size)
     {
-        if (size != temp.size)
-        {
-            size = temp.size;
-            delete elems;
-            elems = new TVector<ValType>[temp.size];
-        }
-        for (size_t i = 0; i < temp.size; i++)
-            elems[i] = temp.elems[i];
+        size = temp.size;
+        delete[] elems;
+        elems = new TVector<ValType>[temp.size];
     }
+    for (int i = 0; i < temp.size; i++)
+        elems[i] = temp.elems[i];
     return *this;
 }
 

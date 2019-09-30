@@ -116,6 +116,22 @@ bool TVector<ValType>::operator!=(const TVector& temp) const
 }
 
 template<typename ValType>
+TVector<ValType> & TVector<ValType>::operator=(const TVector & temp)
+{
+    if (this == &temp)
+        return *this;
+    if (size != temp.size)
+    {
+        size = temp.size;
+        delete[] elems;
+        elems = new ValType[size];
+    }
+    for (int i = 0; i < temp.size; i++)
+        elems[i] = temp.elems[i];
+    return *this;
+}
+
+template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(ValType temp)
 {
     TVector<ValType> res(*this);
@@ -123,6 +139,8 @@ TVector<ValType> TVector<ValType>::operator+(ValType temp)
         res.elems[i] = elems[i] + temp;
     return res;
 }
+
+
 
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator-(ValType temp)
@@ -145,10 +163,12 @@ TVector<ValType> TVector<ValType>::operator*(ValType temp)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
-    if (size != temp.size)
+    if ((startIndex + size) != (temp.SetStartIndex + temp.size)
         throw "Размерности не совпадают";
-    TVector<ValType> res(*this);
-    for (size_t i = 0; i < size; i++)
+    size_t resultsize = (size >= temp.size) ? size : temp.size;
+    size_t resultSI = (size >= temp.size) ? startIndex : temp.startIndex;
+    TVector<ValType> res(resultsize);
+    for (size_t i = 0; i < resultsize; i++)
         res.elems[i] = temp.elems[i] + res.elems[i];
     return res;
 }
@@ -198,6 +218,7 @@ ValType& TVector<ValType>::operator[](size_t index)
 {
     if ((index - startIndex) >= size)
         throw "Выход за размерность вектора";
+    if ((index >= 0) && (index)) return (ValType)0;
     return elems[index - startIndex];
 }
 
@@ -206,24 +227,11 @@ const ValType& TVector<ValType>::operator[](size_t index) const
 {
     if ((index - startIndex) >= size)
         throw "Выход за размерность вектора";
+    if ((index >= 0) && (index)) return (ValType)0;
     return elems[index - startIndex];
 }
 
-template<typename ValType>
-TMatrix<ValType>& TMatrix<ValType>::operator=(const TMatrix<ValType>& temp)
-{
-    if (this == &temp)
-        return *this;
-    if (size != temp.size)
-    {
-        size = temp.size;
-        delete[] elems;
-        elems = new TVector<ValType>[temp.size];
-    }
-    for (int i = 0; i < temp.size; i++)
-        elems[i] = temp.elems[i];
-    return *this;
-}
+
 
 template<typename ValType>
 void TVector<ValType>::SetStartIndex(size_t si)
