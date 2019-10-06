@@ -26,19 +26,21 @@ public:
     ValType Determinant();
 
 
-    friend ostream& operator<<(ostream& out, const TMatrix& _v)
+    friend ostream& operator<<(ostream& outputStream, const TMatrix<ValType>& matrix)
     {
-        for (int i = 0; i < _v.size; i++)
-        {
-            out << _v.elems[i] << "\n";
-        }
-        return out;
+        if (matrix.size == 0)
+            return outputStream;
+        for (size_t i = 0; i < matrix.size - 1; i++)
+            outputStream << matrix.elems[i] << '\n';
+        return outputStream << matrix.elems[matrix.size - 1];
     }
-    friend istream& operator >> (istream& in, TMatrix& temp)
+    friend istream& operator >> (istream& inputStream, TMatrix<ValType>& matrix)
     {
-        for (int i = 0; i < temp.size; i++)
-            in >> temp.elems[i];
-        return in;
+        if (matrix.size == 0)
+            return inputStream;
+        for (size_t i = 0; i < matrix.size; i++)
+            inputStream >> matrix.elems[i];
+        return inputStream;
     }
 };
 

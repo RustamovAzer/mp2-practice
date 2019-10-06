@@ -43,29 +43,24 @@ public:
     
 
 
-    friend ostream& operator<<(ostream& out, const TVector& _v)
+    friend ostream& operator<<(ostream& outputStream, const TVector& vector)
     {
-        if (_v.size == 0)
-            return out;
-        out << "| ";
-       /* 
-        for (int i = 0; i < _v.startIndex; i++)
-            out << setw(6) << setprecision(4) << right << ValType(0) << "|";
-       */
-        for (int i = 0; i < _v.size; i++)
-            out << setw(6) << setprecision(4) << right << _v.elems[i] << "|";
-        return out;
+        outputStream << "[ ";
+        if (vector.size == 0)
+            return outputStream << ']';
+        for (size_t i = 0; i < vector.startIndex; i++)
+            outputStream << setw(5) << setprecision(2) << right << ValType(0) << ' ';
+        for (size_t i = 0; i < vector.size; i++)
+            outputStream << setw(5) << setprecision(2) << right << vector.elems[i] << ' ';
+        return outputStream << ']';
     }
-    friend istream& operator >> (istream& in, TVector& temp)
+    friend istream& operator >> (istream& inputStream, TVector& vector)
     {
-        if (temp.size == 0)
-            return in;
-        for (int i = temp.startIndex; i < temp.size + temp.startIndex; i++)
-        {
-            cout << "Введите " << i + 1 << " элемент: ";
-            in >> temp.elems[i];
-        }
-        return in;
+        if (vector.size == 0)
+            return inputStream;
+        for (size_t i = 0; i < vector.size; i++)
+            inputStream >> vector.elems[i];
+        return inputStream;
     }
 };
 
@@ -165,7 +160,7 @@ TVector<ValType> TVector<ValType>::operator*(ValType temp)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
-    if ((startIndex + size) != (temp.SetStartIndex + temp.size))
+    if ((startIndex + size) != (temp.startIndex + temp.size))
         throw "Размерности не совпадают";
     int resultsize = (size >= temp.size) ? size : temp.size;
     int resultSI = (size >= temp.size) ? startIndex : temp.startIndex;
@@ -220,7 +215,6 @@ ValType& TVector<ValType>::operator[](int index)
 {
     if ((index - startIndex) >= size)
         throw "Выход за размерность вектора";
-    if ((index >= 0) && (index)) return (ValType)0;
     return elems[index - startIndex];
 }
 
@@ -229,7 +223,6 @@ const ValType& TVector<ValType>::operator[](int index) const
 {
     if ((index - startIndex) >= size)
         throw "Выход за размерность вектора";
-    if ((index >= 0) && (index)) return (ValType)0;
     return elems[index - startIndex];
 }
 
