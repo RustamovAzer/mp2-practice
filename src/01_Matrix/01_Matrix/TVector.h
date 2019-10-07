@@ -94,7 +94,7 @@ TVector<ValType>::~TVector()
 template<typename ValType>
 bool TVector<ValType>::operator==(const TVector& temp) const
 {
-    if (size != temp.size)
+    if ((size != temp.size)||(startIndex != temp.startIndex))
         return false;
     for (int i = 0; i < size; i++)
     {
@@ -123,6 +123,7 @@ TVector<ValType> & TVector<ValType>::operator=(const TVector & temp)
         delete[] elems;
         elems = new ValType[size];
     }
+    startIndex = temp.startIndex;
     for (int i = 0; i < temp.size; i++)
         elems[i] = temp.elems[i];
     return *this;
@@ -142,10 +143,10 @@ TVector<ValType> TVector<ValType>::operator+(ValType temp)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator-(ValType temp)
 {
-    TVector<ValType> rez(*this);
+    TVector<ValType> res(*this);
     for (int i = 0; i < size; i++)
-        rez.elems[i] = rez.elems[i] - temp;
-    return rez;
+        res.elems[i] = res.elems[i] - temp;
+    return res;
 }
 
 template<typename ValType>
@@ -160,13 +161,11 @@ TVector<ValType> TVector<ValType>::operator*(ValType temp)
 template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
-    if ((startIndex + size) != (temp.startIndex + temp.size))
-        throw "Размерности не совпадают";
-    int resultsize = (size >= temp.size) ? size : temp.size;
-    int resultSI = (size >= temp.size) ? startIndex : temp.startIndex;
-    TVector<ValType> res(resultsize);
-    for (int i = 0; i < resultsize; i++)
-        res.elems[i] = temp.elems[i] + res.elems[i];
+    if (size != temp.size)
+        throw (char*)"Размерности не совпадают";
+    TVector<ValType> res(this->size,this->startIndex);
+    for (int i = 0; i < size; i++)
+        res.elems[i] = temp.elems[i] + this->elems[i];
     return res;
 }
 
@@ -174,18 +173,18 @@ template<typename ValType>
 TVector<ValType> TVector<ValType>::operator-(const TVector& temp)
 {
     if (size != temp.size)
-        throw "Размерности не совпадают";
-    TVector<ValType> rez(*this);
+        throw (char*)"Размерности не совпадают";
+    TVector<ValType> res(this->size, this->startIndex);
     for (int i = 0; i < size; i++)
-        rez.elems[i] = rez.elems[i] - temp.elems[i];
-    return rez;
+        res.elems[i] = temp.elems[i] - this->elems[i];
+    return res;
 }
 
 template<typename ValType>
 ValType TVector<ValType>::operator*(const TVector& temp)
 {
     if (size != temp.size)
-        throw "Размерности не совпадают";
+        throw (char*)"Размерности не совпадают";
     ValType res = 0;
     for (int i = 0; i < size; i++)
         res += elems[i] * temp.elems[i];
@@ -214,7 +213,7 @@ template<typename ValType>
 ValType& TVector<ValType>::operator[](int index)
 {
     if ((index - startIndex) >= size)
-        throw "Выход за размерность вектора";
+        throw (char*)"Выход за размерность вектора";
     return elems[index - startIndex];
 }
 
@@ -222,7 +221,7 @@ template<typename ValType>
 const ValType& TVector<ValType>::operator[](int index) const
 {
     if ((index - startIndex) >= size)
-        throw "Выход за размерность вектора";
+        throw (char*)"Выход за размерность вектора";
     return elems[index - startIndex];
 }
 
@@ -246,5 +245,4 @@ TVector<ValType>& TVector<ValType>::Transpose()
     return *this;
 }
 
-;
 #endif

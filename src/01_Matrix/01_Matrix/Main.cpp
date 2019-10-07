@@ -11,7 +11,7 @@ int main()
     cout << endl << "Введите размер матриц: ";
     cin >> size;
 
-    TMatrix<double> tm1(size), tm2(size), tm3, tm4;
+    TMatrix<double> tm1(size), tm2(size), tm3(3), tm4(3);
     TVector<double> tv(size);
     double tmp;
 
@@ -19,10 +19,10 @@ int main()
     cin >> tm1;
     cout << "Введите вторую матрицу: " << endl;
     cin >> tm2;
-    cout << "Введите третью матрицу (size = 7): " << endl;
-    cin >> tm2;
-    cout << "Введите четвертую матрицу (size = 7): " << endl;
-    cin >> tm2;
+    cout << "Введите третью матрицу (size = 3): " << endl;
+    cin >> tm3;
+    cout << "Введите четвертую матрицу (size = 3): " << endl;
+    cin >> tm4;
     cout << "Введите число:" << endl;
     cin >> tmp;
     cout << "Введите вектор: " << endl;
@@ -32,11 +32,11 @@ int main()
     cout << "(matrix1 != matrix2): " << (tm1 != tm2) << endl;
     cout << "(matrix1 == matrix3): " << (tm1 == tm3) << endl;
 
-    cout << "matrix1 + value:" << endl;
+    cout << "matrix1 + число:" << endl;
     cout << (tm1 + tmp) << endl;
-    cout << "matrix1 - value:" << endl;
+    cout << "matrix1 - число:" << endl;
     cout << (tm1 - tmp) << endl;
-    cout << "matrix1 * value:" << endl;
+    cout << "matrix1 * число:" << endl;
     cout << (tm1 * tmp) << endl;
 
     cout << "matrix1 + matrix2:" << endl;
@@ -60,7 +60,7 @@ int main()
     }
     catch (char* msg)
     {
-        cout << "Ошибка: " << msg;
+        cout << "Ошибка: " << msg << endl;
     }
 
     try
@@ -69,7 +69,7 @@ int main()
     }
     catch (char* msg)
     {
-        cout << "Ошибка: " << msg;
+        cout << "Ошибка: " << msg << endl;
     }
 
     system("pause");

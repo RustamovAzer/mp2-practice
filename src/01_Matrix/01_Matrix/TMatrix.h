@@ -5,7 +5,7 @@
 #include "TVector.h"
 
 template<typename ValType>
-class TMatrix : public TVector<TVector<ValType>>
+class TMatrix : public TVector<TVector<ValType> >
 {
 public:
     explicit TMatrix(int _size = 10);
@@ -55,9 +55,9 @@ template<typename ValType>
 TMatrix<ValType>::TMatrix(const TMatrix<ValType>& temp)
 {
    this->size = temp.size;
-    this->elems = new TVector<ValType>[temp.size];
-    for (int i = 0; i < temp.size; i++)
-        this->elems[i] = temp.elems[i];
+   this->elems = new TVector<ValType>[temp.size];
+   for (int i = 0; i < temp.size; i++)
+       this->elems[i] = temp.elems[i];
 }
 
 template<typename ValType>
@@ -78,15 +78,15 @@ template<typename ValType>
 bool TMatrix<ValType>::operator==(const TMatrix<ValType>& temp) const
 {
     if (this->size != temp.size)
-        throw "Размерности не совпадают";
+        return false;
     for (int i = 0; i < temp.size; i++)
     {
         if (this->elems[i] != temp.elems[i])
         {
-            return 0;
+            return false;
         }
     }
-    return 1;
+    return true;
 }
 
 template<typename ValType>
@@ -142,29 +142,29 @@ template<typename ValType>
 TMatrix<ValType> TMatrix<ValType>::operator+(const TMatrix& temp)
 {
     if (this->size != temp.size)
-        throw "Размерности не совпадают";
-    TMatrix<ValType> rez(*this);
-    for (int i = 0; i < rez.size; i++)
-        rez.elems[i] = this->elems[i] + temp.elems[i];
-    return rez;
+        throw (char*)"Размерности не совпадают";
+    TMatrix<ValType> res(this->size);
+    for (int i = 0; i < res.size; i++)
+        res.elems[i] = this->elems[i] + temp.elems[i];
+    return res;
 }
 
 template<typename ValType>
 TMatrix<ValType> TMatrix<ValType>::operator-(const TMatrix& temp)
 {
     if (this->size != temp.size)
-        throw "Размерности не совпадают";
-    TMatrix<ValType> rez(*this);
-    for (int i = 0; i < rez.size; i++)
-        rez.elems[i] = this->elems[i] - temp.elems[i];
-    return rez;
+        throw (char*)"Размерности не совпадают";
+    TMatrix<ValType> res(this->size);
+    for (int i = 0; i < res.size; i++)
+        res.elems[i] = this->elems[i] - temp.elems[i];
+    return res;
 }
 
 template<typename ValType>
 TMatrix<ValType> TMatrix<ValType>::operator*(const TMatrix& temp)
 {
     if (this->size != temp.size)
-        throw "Размерности не совпадают";
+        throw (char*)"Размерности не совпадают";
     TMatrix<ValType> rez(*this);
     for (int i = 0; i < rez.size; i++)
     {
@@ -186,7 +186,7 @@ TVector<ValType> TMatrix<ValType>::operator*(const TVector<ValType>& temp)
 {
     int _size = temp.GetSize();
     if (this->size != _size)
-        throw "Размерности не совпадают";
+        throw (char*)"Размерности не совпадают";
     TVector<ValType> rez(_size);
     for (int i = 0; i < _size; i++)
     {
