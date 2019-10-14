@@ -23,7 +23,7 @@ public:
     TMatrix operator*(const TMatrix&);
     TVector<ValType> operator*(const TVector<ValType>&);
 
-    ValType Determinant();
+    ValType Determinant() const;
 
 
     friend ostream& operator<<(ostream& outputStream, const TMatrix<ValType>& matrix)
@@ -52,23 +52,13 @@ TMatrix<ValType>::TMatrix(int _size) : TVector<TVector<ValType> >(_size)
 }
 
 template<typename ValType>
-TMatrix<ValType>::TMatrix(const TMatrix<ValType>& temp)
-{
-   this->size = temp.size;
-   this->elems = new TVector<ValType>[temp.size];
-   for (int i = 0; i < temp.size; i++)
-       this->elems[i] = temp.elems[i];
+TMatrix<ValType>::TMatrix(const TMatrix<ValType>& temp) : TVector<TVector<ValType> >(temp)
+{   
 }
 
 template<typename ValType>
-TMatrix<ValType>::TMatrix(const TVector<TVector<ValType> >& temp) : TVector<TVector<ValType> >(temp.GetSize())
+TMatrix<ValType>::TMatrix(const TVector<TVector<ValType> >& temp) : TVector<TVector<ValType> >(temp)
 {
-    for (int i = 0; i <this->size; i++)
-    {
-        this->elems[i] = TVector<ValType>(this->size - i, i);
-        for (int j = i; j <this->size; j++)
-            this->elems[i][j] = temp[i][j];
-    }
 }
 
 template<typename ValType>
@@ -98,7 +88,7 @@ bool TMatrix<ValType>::operator!=(const TMatrix<ValType>& temp) const
 template<typename ValType>
 TMatrix<ValType>& TMatrix<ValType>::operator=(const TMatrix<ValType>& temp)
 {
-    if (this == &temp)
+    if (*this == temp)
         return *this;
     if (this->size != temp.size)
     {
@@ -142,7 +132,7 @@ template<typename ValType>
 TMatrix<ValType> TMatrix<ValType>::operator+(const TMatrix& temp)
 {
     if (this->size != temp.size)
-        throw (char*)"Размерности не совпадают";
+        throw std::exception("Размерности не совпадают");
     TMatrix<ValType> res(this->size);
     for (int i = 0; i < res.size; i++)
         res.elems[i] = this->elems[i] + temp.elems[i];
@@ -153,7 +143,7 @@ template<typename ValType>
 TMatrix<ValType> TMatrix<ValType>::operator-(const TMatrix& temp)
 {
     if (this->size != temp.size)
-        throw (char*)"Размерности не совпадают";
+        throw std::exception("Размерности не совпадают");
     TMatrix<ValType> res(this->size);
     for (int i = 0; i < res.size; i++)
         res.elems[i] = this->elems[i] - temp.elems[i];
@@ -164,7 +154,7 @@ template<typename ValType>
 TMatrix<ValType> TMatrix<ValType>::operator*(const TMatrix& temp)
 {
     if (this->size != temp.size)
-        throw (char*)"Размерности не совпадают";
+        throw std::exception("Размерности не совпадают");
     TMatrix<ValType> rez(*this);
     for (int i = 0; i < rez.size; i++)
     {
@@ -186,7 +176,7 @@ TVector<ValType> TMatrix<ValType>::operator*(const TVector<ValType>& temp)
 {
     int _size = temp.GetSize();
     if (this->size != _size)
-        throw (char*)"Размерности не совпадают";
+        throw std::exception("Размерности не совпадают");
     TVector<ValType> rez(_size);
     for (int i = 0; i < _size; i++)
     {
@@ -199,7 +189,7 @@ TVector<ValType> TMatrix<ValType>::operator*(const TVector<ValType>& temp)
 }
 
 template<typename ValType>
-ValType TMatrix<ValType>::Determinant()
+ValType TMatrix<ValType>::Determinant() const
 {
     ValType res;
     res = ValType(1);
