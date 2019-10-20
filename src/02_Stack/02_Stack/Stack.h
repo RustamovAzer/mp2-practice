@@ -5,12 +5,12 @@
 
 using namespace std;
 
-template<class ValueType>
+template<class ValType>
 class TStack
 {
 private:
-    size_t size, top;
-    ValueType* elems;
+    size_t size, head;
+    ValType* elems;
 public:
     TStack(size_t);
     ~TStack();
@@ -18,53 +18,92 @@ public:
     bool IsFull();
     bool IsEmpty();
     
-    void Push(ValueType _next);
-    ValueType Pop();
+    void Push(ValType _next);
+    void Pop();
+    ValType Top;
 
+    TStack<ValType>& operator=(const TStack<ValType>& _tstack);
 };
 
 //------------------------------------------------
 
-template<class ValueType>
-TStack<ValueType>::TStack(size_t _size)
+template<class ValType>
+TStack<ValType>::TStack(size_t _size):size(_size), head(0)
 {
-    top = 0;
-    elems = new ValueType[_size];
+    if (_size <=0) throw std::exception("Non-positive size")
+    elems = new ValType[_size];
 }
 
-template<class ValueType>
-TStack<ValueType>::~TStack()
+template<typename ValType>
+TStack<ValType>::TStack(const TStack<ValType>& _stack) 
+    : size(_stack.size), head(_stack.head)
 {
-    top = 0;
+    elems = new ValType[size];
+    for (int i = 0; i < head; i++)
+        elems[i] = _stack.elems[i];
+}
+
+template<class ValType>
+TStack<ValType>::~TStack()
+{
+    head = 0;
     delete[] elems;
 }
 
-template<class ValueType>
-bool TStack<ValueType>::IsFull()
+template<class ValType>
+bool TStack<ValType>::IsFull()
 {
-    if (top == size)return true;
+    if (head == size)return true;
     return false;
 }
 
-template<class ValueType>
-bool TStack<ValueType>::IsEmpty()
+template<class ValType>
+bool TStack<ValType>::IsEmpty()
 {
-    if (top == 0)return true;
+    if (head == 0)return true;
     return false;
 }
 
-template<class ValueType>
-void TStack<ValueType>::Push(ValueType _next)
+template<class ValType>
+void TStack<ValType>::Push(ValType _next)
 {
     if (IsFull)throw "Stack is full";
-    elems[top++] = _next;
+    elems[head++] = _next;
 }
 
-template<class ValueType>
-inline ValueType TStack<ValueType>::Pop()
+template<class ValType>
+void TStack<ValType>::Pop()
 {
     if (IsEmpty)throw "Stack is empty";
-    return elems[--top];
+    return elems[--head];
 }
+
+
+
+template<typename ValType>
+ValType Stack<ValType>::Top() const
+{
+    if (IsEmpty()) throw std::exception("Stack is empty")
+    return elems[head - 1];
+}
+
+template<typename ValType>
+TStack<ValType>& TStack<ValType>::operator=(const TStack<ValType>& _tstack)
+{
+    if (this == &_tstack)
+        return *this;
+    if (size != _tstack.size)
+    {
+        delete elems;
+        size = _tstack.size;
+        elems = new ValType[size];
+    }
+    head = _tstack.head;
+    for (int i = 0; i < size; i++)
+        elems[i] = _tstack.elems[i];
+    return *this;
+}
+
+};
 
 #endif
