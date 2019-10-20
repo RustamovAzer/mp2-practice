@@ -53,6 +53,7 @@ int main()
     cout << "14: Матрица1 = матрица2(присваивание)" << endl;
     cout << "15: Матрица1 * матрица2" << endl;
     cout << "16: Детерминант матрицы1" << endl;
+    cout << "0 : Выход " << endl;
 
     int test;
 
@@ -145,7 +146,7 @@ int main()
 
     try
     {
-        TMatrix<double> tv3(-2);
+        TMatrix<double> tm4(-2);
     }
     catch (exception e)
     {
