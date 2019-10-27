@@ -6,14 +6,14 @@
 using namespace std;
 
 template<class ValType>
-class TStack
+class Stack
 {
 private:
     size_t size, head;
     ValType* elems;
 public:
-    TStack(size_t);
-    ~TStack();
+    Stack(size_t);
+    ~Stack();
 
     bool IsFull();
     bool IsEmpty();
@@ -22,20 +22,20 @@ public:
     void Pop();
     ValType Top;
 
-    TStack<ValType>& operator=(const TStack<ValType>& _tstack);
+    Stack<ValType>& operator=(const Stack<ValType>& _Stack);
 };
 
 //------------------------------------------------
 
 template<class ValType>
-TStack<ValType>::TStack(size_t _size):size(_size), head(0)
+Stack<ValType>::Stack(size_t _size):size(_size), head(0)
 {
-    if (_size <=0) throw std::exception("Non-positive size")
+    if (_size <=0) throw std::exception("Неположительный размер")
     elems = new ValType[_size];
 }
 
 template<typename ValType>
-TStack<ValType>::TStack(const TStack<ValType>& _stack) 
+Stack<ValType>::Stack(const Stack<ValType>& _stack) 
     : size(_stack.size), head(_stack.head)
 {
     elems = new ValType[size];
@@ -44,37 +44,37 @@ TStack<ValType>::TStack(const TStack<ValType>& _stack)
 }
 
 template<class ValType>
-TStack<ValType>::~TStack()
+Stack<ValType>::~Stack()
 {
     head = 0;
     delete[] elems;
 }
 
 template<class ValType>
-bool TStack<ValType>::IsFull()
+bool Stack<ValType>::IsFull()
 {
     if (head == size)return true;
     return false;
 }
 
 template<class ValType>
-bool TStack<ValType>::IsEmpty()
+bool Stack<ValType>::IsEmpty()
 {
     if (head == 0)return true;
     return false;
 }
 
 template<class ValType>
-void TStack<ValType>::Push(ValType _next)
+void Stack<ValType>::Push(ValType _next)
 {
-    if (IsFull)throw "Stack is full";
+    if (IsFull)throw "Стек полон";
     elems[head++] = _next;
 }
 
 template<class ValType>
-void TStack<ValType>::Pop()
+void Stack<ValType>::Pop()
 {
-    if (IsEmpty)throw "Stack is empty";
+    if (IsEmpty()) throw std::exception("Стек пуст")
     return elems[--head];
 }
 
@@ -83,27 +83,27 @@ void TStack<ValType>::Pop()
 template<typename ValType>
 ValType Stack<ValType>::Top() const
 {
-    if (IsEmpty()) throw std::exception("Stack is empty")
+    if (IsEmpty()) throw std::exception("Стек пуст")
     return elems[head - 1];
 }
 
 template<typename ValType>
-TStack<ValType>& TStack<ValType>::operator=(const TStack<ValType>& _tstack)
+Stack<ValType>& Stack<ValType>::operator=(const Stack<ValType>& _Stack)
 {
-    if (this == &_tstack)
+    if (this == &_Stack)
         return *this;
-    if (size != _tstack.size)
+    if (size != _Stack.size)
     {
         delete elems;
-        size = _tstack.size;
+        size = _Stack.size;
         elems = new ValType[size];
     }
-    head = _tstack.head;
+    head = _Stack.head;
     for (int i = 0; i < size; i++)
-        elems[i] = _tstack.elems[i];
+        elems[i] = _Stack.elems[i];
     return *this;
 }
 
-};
+
 
 #endif
