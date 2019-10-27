@@ -114,53 +114,71 @@ int main()
     } while (test != 0);
     
 
+    cout << "Выберите тест исключений" << endl;
+    cout << "1 : Умножение матриц разных размеров" << endl;
+    cout << "2 : Сложение матриц разных размеров" << endl;
+    cout << "3 : Вычитание матриц разных размеров" << endl;
+    cout << "4 : Создание матрицы неположительного размера" << endl;
+    cout << "5 : Выход индекса за пределы" << endl;
+    cout << "0 : Выход " << endl;
 
-
-    
-    try
+    do
     {
-        tm1 * tm3;
-    }
-    catch (exception e)
-    {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-
-    try
-    {
-        tm1 + tm3;
-    }
-    catch (exception e)
-    {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-
-    try
-    {
-        tm1 - tm3;
-    }
-    catch (exception e)
-    {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-
-    try
-    {
-        TMatrix<double> tm4(-2);
-    }
-    catch (exception e)
-    {
-        cout << "Ошибка: " << e.what() << endl;
-    }
-
-    try
-    {
-        tm1[73];
-    }
-    catch (exception e)
-    {
-        cout << "Ошибка: " << e.what() << endl;
-    }
+        cin >> test;
+        switch (test)
+        {
+        case 1:
+            try
+            {
+                tm1 * tm3;
+            }
+            catch (exception e)
+            {
+                cout << "Ошибка: " << e.what() << endl;
+            }
+            break;
+        case 2:
+            try
+            {
+                tm1 + tm3;
+            }
+            catch (exception e)
+            {
+                cout << "Ошибка: " << e.what() << endl;
+            }
+            break;
+        case 3:
+            try
+            {
+                tm1 - tm3;
+            }
+            catch (exception e)
+            {
+                cout << "Ошибка: " << e.what() << endl;
+            }
+            break;
+        case 4:
+            try
+            {
+                TMatrix<double> tm4(-2);
+            }
+            catch (exception e)
+            {
+                cout << "Ошибка: " << e.what() << endl;
+            }
+            break;
+        case 5:
+            try
+            {
+                tm1[73];
+            }
+            catch (exception e)
+            {
+                cout << "Ошибка: " << e.what() << endl;
+            }
+            break;
+        }
+    } while (test >= 1);
 
     system("pause");
 
