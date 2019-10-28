@@ -21,12 +21,10 @@ int main()
 
     cout << "Введите первую матрицу: " << endl;
     cin >> tm1;
-    
     cout << "Введите вторую матрицу: " << endl;
     cin >> tm2;
     cout << "Введите третью матрицу(размер на 1 больше): " << endl;
     cin >> tm3;
-
     cout << "Введите первый вектор: " << endl;
     cin >> tv1;
     cout << "Введите первый вектор: " << endl;
@@ -42,7 +40,7 @@ int main()
     cout << "4 : Вектор1 * число" << endl;
     cout << "5 : Вектор1 + вектор2" << endl;
     cout << "6 : Вектор1 - вектор2" << endl;
-    cout << "7 : Вектор1 * вектор2" << endl;
+    cout << "7 : Вектор1 * вектор2" << endl << endl;
 
     cout << "8 : Сравнение матриц" << endl;
     cout << "9 : Матрица1 + число" << endl;
@@ -53,7 +51,8 @@ int main()
     cout << "14: Матрица1 = матрица2(присваивание)" << endl;
     cout << "15: Матрица1 * матрица2" << endl;
     cout << "16: Детерминант матрицы1" << endl;
-    cout << "0 : Выход(переход к тестированию исклычений) " << endl;
+
+    cout << endl << "0 : Перейти к тестированию исключений " << endl;
 
     int test;
 
@@ -114,13 +113,14 @@ int main()
     } while (test != 0);
     
 
-    cout << "Выберите тест исключений" << endl;
+    cout << "Выберите тест исключения" << endl;
     cout << "1 : Умножение матриц разных размеров" << endl;
     cout << "2 : Сложение матриц разных размеров" << endl;
     cout << "3 : Вычитание матриц разных размеров" << endl;
     cout << "4 : Создание матрицы неположительного размера" << endl;
     cout << "5 : Выход индекса за пределы" << endl;
-    cout << "0 : Выход " << endl;
+
+    cout << endl << "0 : Завершить программу " << endl;
 
     do
     {
@@ -132,7 +132,7 @@ int main()
             {
                 tm1 * tm3;
             }
-            catch (exception e)
+            catch (const exception& e)
             {
                 cout << "Ошибка: " << e.what() << endl;
             }
@@ -142,7 +142,7 @@ int main()
             {
                 tm1 + tm3;
             }
-            catch (exception e)
+            catch (const exception& e)
             {
                 cout << "Ошибка: " << e.what() << endl;
             }
@@ -152,7 +152,7 @@ int main()
             {
                 tm1 - tm3;
             }
-            catch (exception e)
+            catch (const exception& e)
             {
                 cout << "Ошибка: " << e.what() << endl;
             }
@@ -162,7 +162,7 @@ int main()
             {
                 TMatrix<double> tm4(-2);
             }
-            catch (exception e)
+            catch (const exception& e)
             {
                 cout << "Ошибка: " << e.what() << endl;
             }
@@ -172,7 +172,7 @@ int main()
             {
                 tm1[73];
             }
-            catch (exception e)
+            catch (const exception& e)
             {
                 cout << "Ошибка: " << e.what() << endl;
             }

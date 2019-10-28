@@ -69,7 +69,7 @@ public:
 template<typename ValType>
 TVector<ValType>::TVector(int _size, int _startIndex)
 {
-    if (_size <= 0) throw std::exception("Нельзя создать вектор неположительной длины");
+    if (_size <= 0) throw exception("Нельзя создать вектор неположительной длины");
     size = _size;
     elems = new ValType[size];
     startIndex = _startIndex;
@@ -161,7 +161,7 @@ template<typename ValType>
 TVector<ValType> TVector<ValType>::operator+(const TVector& temp)
 {
     if (size != temp.size)
-        throw std::exception("Размерности не совпадают");
+        throw exception("Размерности не совпадают");
     TVector<ValType> res(this->size,this->startIndex);
     for (int i = 0; i < size; i++)
         res.elems[i] = this->elems[i] + temp.elems[i];
@@ -172,7 +172,7 @@ template<typename ValType>
 TVector<ValType> TVector<ValType>::operator-(const TVector& temp)
 {
     if (size != temp.size)
-        throw std::exception("Размерности не совпадают");///
+        throw exception("Размерности не совпадают");///
     TVector<ValType> res(this->size, this->startIndex);
     for (int i = 0; i < size; i++)
         res.elems[i] = this->elems[i] - temp.elems[i];
@@ -183,7 +183,7 @@ template<typename ValType>
 ValType TVector<ValType>::operator*(const TVector& temp)
 {
     if (size != temp.size)
-        throw std::exception("Размерности не совпадают");
+        throw exception("Размерности не совпадают");
     ValType res = 0;
     for (int i = 0; i < size; i++)
         res += elems[i] * temp.elems[i];
@@ -212,7 +212,7 @@ template<typename ValType>
 ValType& TVector<ValType>::operator[](int index)
 {
     if ((index - startIndex) >= size)
-        throw std::exception("Выход за размерность вектора");
+        throw exception("Выход за размерность вектора");
     return elems[index - startIndex];
 }
 
@@ -220,7 +220,7 @@ template<typename ValType>
 const ValType& TVector<ValType>::operator[](int index) const
 {
     if ((index - startIndex) >= size)
-        throw std::exception("Выход за размерность вектора");
+        throw exception("Выход за размерность вектора");
     return elems[index - startIndex];
 }
 
