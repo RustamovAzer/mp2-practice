@@ -1,8 +1,6 @@
 #ifndef _STACK_H_
 #define _STACK_H_
 
-
-
 using namespace std;
 
 template<class ValType>
@@ -13,6 +11,7 @@ private:
     ValType* elems;
 public:
     Stack(size_t);
+    Stack(const Stack&);
     ~Stack();
 
     bool IsFull();
@@ -20,7 +19,7 @@ public:
     
     void Push(ValType _next);
     void Pop();
-    ValType Top;
+    ValType Top();
 
     Stack<ValType>& operator=(const Stack<ValType>& _Stack);
 };
@@ -30,12 +29,12 @@ public:
 template<class ValType>
 Stack<ValType>::Stack(size_t _size):size(_size), head(0)
 {
-    if (_size <=0) throw std::exception("Неположительный размер")
+    if (_size <=0) throw exception("Неположительный размер")
     elems = new ValType[_size];
 }
 
 template<typename ValType>
-Stack<ValType>::Stack(const Stack<ValType>& _stack) 
+Stack<ValType>::Stack(const Stack<ValType>& _stack)
     : size(_stack.size), head(_stack.head)
 {
     elems = new ValType[size];
@@ -74,20 +73,20 @@ void Stack<ValType>::Push(ValType _next)
 template<class ValType>
 void Stack<ValType>::Pop()
 {
-    if (IsEmpty()) throw std::exception("Стек пуст")
+    if (IsEmpty()) throw exception("Стек пуст")
     return elems[--head];
 }
 
-
-
-template<typename ValType>
-ValType Stack<ValType>::Top() const
+template<class ValType>
+ValType Stack<ValType>::Top()
 {
-    if (IsEmpty()) throw std::exception("Стек пуст")
-    return elems[head - 1];
+    if (IsEmpty()) throw exception("Стек пуст")
+        return elems[head - 1];
 }
 
-template<typename ValType>
+
+
+template<class ValType>
 Stack<ValType>& Stack<ValType>::operator=(const Stack<ValType>& _Stack)
 {
     if (this == &_Stack)

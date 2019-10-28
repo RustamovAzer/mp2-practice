@@ -1,16 +1,16 @@
-#include "PostfixForm.h"
 #include <string>
-#include "iostream"
+#include <iostream>
+#include "PostfixForm.h"
 
-std::string PostfixForm::postfixForm;
+string PostfixForm::postfixForm;
 int PostfixForm::countOfOperands;
-std::string *PostfixForm::operands;
+string *PostfixForm::operands;
 
 
-std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
+string PostfixForm::ConvertToPostfixForm(const string & _expression)
 {
-    std::string *_operands = new std::string[_expression.length()];
-    std::string buffer;
+    string *_operands = new string[_expression.length()];
+    string buffer;
     int lengthOfExpression = _expression.length();
     int numberOfOperators = 0;
     int numberOfOperands = 0;
@@ -22,7 +22,7 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
     int indexOfOperand = 0;
 
     Stack<char> operators(lengthOfExpression);
-    Stack<std::string> operands(lengthOfExpression);
+    Stack<string> operands(lengthOfExpression);
 
     for (int i = 0; i < lengthOfExpression; i++)
     {
@@ -52,7 +52,7 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
             && (_expression[i] != '*') && (_expression[i] != '/')
             && (_expression[i] != '(') && (_expression[i] != ')'))
         {
-            if (numberOfOperands == (numberOfOperators + 1)) throw std::exception("Неверное выражение");
+            if (numberOfOperands == (numberOfOperators + 1)) throw exception("Неверное выражение");
             buffer.push_back(_expression[i]);
             if (i == (lengthOfExpression - 1))
             {
@@ -75,7 +75,7 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
                 && (lastSymbol != '*') && (lastSymbol != '/')
                 && (lastSymbol != ' ') && (lastSymbol != '(')
                 && (lastSymbol != 0))   
-                throw std::exception("Неверное выражение");
+                throw exception("Неверное выражение");
             numberOfLeftBrackets++;
             operators.Push(_expression[i]);
         }
@@ -84,11 +84,11 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
             if ((lastSymbol == '+') || (lastSymbol == '-')
                 || (lastSymbol == '*') || (lastSymbol == '/')
                 || (lastSymbol == '('))
-                throw std::exception("Неверное выражение");
+                throw exception("Неверное выражение");
             numberOfRightBrackets++;
             while (operators.Top() != '(')
             {
-                std::string tmp;
+                string tmp;
                 try
                 {
                     tmp.push_back(operators.Top());
@@ -118,7 +118,7 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
             while ((!operators.IsEmpty()) && (operators.Top() != '(')
                 && (getPriorityOfOperator(_expression[i]) <= getPriorityOfOperator(operators.Top())))
             {
-                std::string tmp;
+                string tmp;
                 tmp.push_back(operators.Top());
                 operators.Pop();
                 operands.Push(tmp);
@@ -136,13 +136,13 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
 
     while (!operators.IsEmpty())
     {
-        std::string tmp;
+        string tmp;
         tmp.push_back(operators.Top());
         operators.Pop();
         operands.Push(tmp);
     }
 
-    Stack<std::string> reverseStackOfOperands(lengthOfExpression);
+    Stack<string> reverseStackOfOperands(lengthOfExpression);
     for (; !operands.IsEmpty(); operands.Pop())
         reverseStackOfOperands.Push(operands.Top());
 
@@ -158,7 +158,7 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
 
     countOfOperands = numberOfOperands;
     {
-        PostfixForm::operands = new std::string[countOfOperands++];
+        PostfixForm::operands = new string[countOfOperands++];
         for (int i = 0; i < countOfOperands; i++)
             PostfixForm::operands[i] = _operands[i];
         delete[] _operands;
@@ -167,15 +167,15 @@ std::string PostfixForm::ConvertToPostfixForm(const std::string & _expression)
     return postfixForm;
 }
 
-double PostfixForm::Calculate(const std::string & _postfixForm, const Variables& _var)
+double PostfixForm::Calculate(const string & _postfixForm, const Variables& _var)
 {
     Stack<double> result(postfixForm.length());
-    std::string tmp;
+    string tmp;
     int value;
 
     for (int i = 0, j = 0; i < postfixForm.length(); i++)
     {
-        std::cout << std::endl << "Iteration: #" << i << std::endl;
+        cout << endl << "Iteration: #" << i << endl;
 
         if (postfixForm[i] != ' ')           
         {
@@ -209,7 +209,7 @@ double PostfixForm::Calculate(const std::string & _postfixForm, const Variables&
             {
                 double b = result.Top(); result.Pop();
                 double a = result.Top(); result.Pop();
-                if (b == 0) throw std::exception("Деление на ноль");
+                if (b == 0) throw exception("Деление на ноль");
                 result.Push(a / b);
             }
             else if (tmp == "+")
@@ -245,7 +245,7 @@ void PostfixForm::Clear()
     delete[] operands;
 }
 
-std::string*& PostfixForm::getOperands()
+string*& PostfixForm::getOperands()
 {
     return operands;
 }
@@ -255,7 +255,7 @@ int PostfixForm::getCountOfOperands()
     return countOfOperands;
 }
 
-bool PostfixForm::isNumber(const std::string& _str)
+bool PostfixForm::isNumber(const string& _str)
 {
     return ((!_str.empty()) && (_str.find_first_not_of("0123456789") == _str.npos));
 }

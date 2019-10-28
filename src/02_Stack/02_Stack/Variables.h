@@ -8,10 +8,10 @@ class Variables
 {
 public:
     int countOfVariables;
-    std::string* variables;
+    string* variables;
     double* values;
 
-    Variables(int _countOFVariables, const std::string* _variables);
+    Variables(int _countOFVariables, const string* _variables);
 
     void setValues();
 
