@@ -2,8 +2,6 @@
 #include <iostream>
 #include "PostfixForm.h"
 
-string PostfixForm::postfixForm;
-int PostfixForm::countOfOperands;
 string *PostfixForm::operands;
 
 
@@ -12,13 +10,11 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
     string *_operands = new string[_expression.length()];
     string buffer;
     int lengthOfExpression = _expression.length();
-    int numberOfOperators = 0;
-    int numberOfOperands = 0;
-    countOfOperands = 0;
-    int numberOfLeftBrackets = 0;
-    int numberOfRightBrackets = 0;
+    int countOfOperators = 0;
+    int countOfOperands = 0;
+    int countOfLeftBrackets = 0;
+    int countOfRightBrackets = 0;
     char lastSymbol = 0;
-    postfixForm.clear();
     int indexOfOperand = 0;
 
     Stack<char> operators(lengthOfExpression);
@@ -33,7 +29,7 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
                 || (_expression[i] == '(') || (_expression[i] == ')')
                 || (_expression[i] == ' '))
             {
-                numberOfOperands++;
+                countOfOperands++;
                 operands.Push(buffer);
                 {
                     int k = 0;
@@ -52,11 +48,12 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
             && (_expression[i] != '*') && (_expression[i] != '/')
             && (_expression[i] != '(') && (_expression[i] != ')'))
         {
-            if (numberOfOperands == (numberOfOperators + 1)) throw exception("Неверное выражение");
+            if (countOfOperands == (countOfOperators + 1))
+            throw exception("Неверное выражение");
             buffer.push_back(_expression[i]);
             if (i == (lengthOfExpression - 1))
             {
-                numberOfOperands++;
+                countOfOperands++;
                 operands.Push(buffer);
                 {
                     int k = 0;
@@ -76,7 +73,7 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
                 && (lastSymbol != ' ') && (lastSymbol != '(')
                 && (lastSymbol != 0))   
                 throw exception("Неверное выражение");
-            numberOfLeftBrackets++;
+            countOfLeftBrackets++;
             operators.Push(_expression[i]);
         }
         else if (_expression[i] == ')')
@@ -85,7 +82,7 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
                 || (lastSymbol == '*') || (lastSymbol == '/')
                 || (lastSymbol == '('))
                 throw exception("Неверное выражение");
-            numberOfRightBrackets++;
+            countOfRightBrackets++;
             while (operators.Top() != '(')
             {
                 string tmp;
@@ -106,12 +103,12 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
         {
             if (lastSymbol == 0) throw exception("Неверное выражение");
             operators.Push(_expression[i]);
-            numberOfOperators++;
+            countOfOperators++;
         }
         else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator(operators.Top()))
         {
             operators.Push(_expression[i]);
-            numberOfOperators++;
+            countOfOperators++;
         }
         else
         {
@@ -124,15 +121,15 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
                 operands.Push(tmp);
             }
             operators.Push(_expression[i]);
-            numberOfOperators++;
+            countOfOperators++;
         }
 
         if (_expression[i] != ' ')
             lastSymbol = _expression[i];
     }
 
-    if ((numberOfOperands != numberOfOperators + 1)
-        || (numberOfLeftBrackets != numberOfRightBrackets)) throw exception("Неверное выражение");
+    if ((countOfOperands != countOfOperators + 1)
+        || (countOfLeftBrackets != countOfRightBrackets)) throw exception("Неверное выражение");
 
     while (!operators.IsEmpty())
     {
@@ -147,6 +144,8 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
         reverseStackOfOperands.Push(operands.Top());
 
     int startPosition = 0;
+
+    string postfixForm;
     while (!reverseStackOfOperands.IsEmpty())
     {
         startPosition = postfixForm.length();
@@ -156,11 +155,11 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
         postfixForm.insert(postfixForm.length(), buffer);
     }
 
-    countOfOperands = numberOfOperands;
     {
-        PostfixForm::operands = new string[countOfOperands++];
+        PostfixForm::operands = new string[countOfOperands + 1];
         for (int i = 0; i < countOfOperands; i++)
             PostfixForm::operands[i] = _operands[i];
+        PostfixForm::operands[countOfOperands] = " ";
         delete[] _operands;
     }
 
@@ -169,35 +168,24 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
 
 double PostfixForm::Calculate(const string & _postfixForm, const Variables& _var)
 {
-    Stack<double> result(postfixForm.length());
+    Stack<double> result(_postfixForm.length());
     string tmp;
     int value;
 
-    for (int i = 0, j = 0; i < postfixForm.length(); i++)
+    for (int i = 0, j = 0; i <_postfixForm.length(); i++)
     {
-        cout << endl << "Iteration: #" << i << endl;
-
-        if (postfixForm[i] != ' ')           
+        if ((_postfixForm[i] != ' '))
         {
-
+            tmp.push_back(_postfixForm[i]);
         }
         else
         {
-            tmp.push_back(postfixForm[i - 1]);
             if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
             {
-                if (!isNumber(tmp))
-                {
-                    int idx = 0;
-                    while ((idx < countOfOperands) && (operands[idx++] != tmp));
-
-                    result.Push(_var.values[idx]);
-                }
-                else
-                {
-                    result.Push(stod(tmp, 0));
-                }
-                tmp.clear();
+                int idx = 0;
+                while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));
+                idx--;
+                result.Push(_var.values[idx]);
             }
             else if (tmp == "*")
             {
@@ -240,22 +228,5 @@ int PostfixForm::getPriorityOfOperator(const char _operator)
 
 void PostfixForm::Clear()
 {
-    PostfixForm::countOfOperands = 0;
-    PostfixForm::postfixForm.clear();
     delete[] operands;
-}
-
-string*& PostfixForm::getOperands()
-{
-    return operands;
-}
-
-int PostfixForm::getCountOfOperands()
-{
-    return countOfOperands;
-}
-
-bool PostfixForm::isNumber(const string& _str)
-{
-    return ((!_str.empty()) && (_str.find_first_not_of("0123456789") == _str.npos));
 }

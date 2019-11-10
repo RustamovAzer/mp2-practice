@@ -1,8 +1,10 @@
 #ifndef __VARIABLES_H__
 #define __VARIABLES_H__
 
-#include "iostream"
-#include "string"
+#include <iostream>
+#include <string>
+
+using namespace std;
 
 class Variables
 {
@@ -11,7 +13,7 @@ public:
     string* variables;
     double* values;
 
-    Variables(int _countOFVariables, const string* _variables);
+    Variables(const string* _variables);
 
     void setValues();
 
@@ -21,7 +23,7 @@ public:
     ~Variables();
 
 private:
-
+    static bool isNumber(const string& _str);
 };
 
 
