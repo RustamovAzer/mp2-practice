@@ -25,6 +25,8 @@ public:
     void InsertAfter(TKey, TData*, TKey);
     void InsertBefore(TKey, TData*, TKey);
     void Remove(TKey);
+
+    void Print();
 };
 //-------------------------------------------
 template<class TKey, class TData>
@@ -214,4 +216,16 @@ void TList<TKey, TData>::Next()
     if (pCurr)
         pNext = pCurr->pNext;
     else pNext = nullptr;
+};
+
+template<class TKey, class TData>
+void TList<TKey, TData>::Print()
+{
+    Reset();
+
+    while (!IsEnded())
+    {
+        cout << pCurr->Key;
+        Next();
+    }
 };
