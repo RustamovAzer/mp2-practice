@@ -4,6 +4,7 @@
 
 string *PostfixForm::operands;
 
+using namespace std;
 
 string PostfixForm::ConvertToPostfixForm(const string & _expression)
 {
@@ -162,30 +163,38 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
         PostfixForm::operands[countOfOperands] = " ";
         delete[] _operands;
     }
-
+    
     return postfixForm;
 }
 
 double PostfixForm::Calculate(const string & _postfixForm, const Variables& _var)
 {
-    Stack<double> result(_postfixForm.length());
+    Stack<double> result(_postfixForm.size());//length
     string tmp;
     int value;
 
-    for (int i = 0, j = 0; i <_postfixForm.length(); i++)
+    for (int i = 0, j = 0; i <_postfixForm.size(); i++)//length
     {
-        if ((_postfixForm[i] != ' '))
+        if ((_postfixForm[i] != ' ')&& (_postfixForm != "*") && 
+            (_postfixForm != "/") && (_postfixForm != "+") && 
+            (_postfixForm != "-"))
         {
             tmp.push_back(_postfixForm[i]);
         }
         else
         {
-            if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
+            /*if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
             {
                 int idx = 0;
-                while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));
+                while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));//
                 idx--;
                 result.Push(_var.values[idx]);
+            }
+            */
+            if (tmp.size() != 0)
+            {
+                result.Push(_var[tmp]);
+                tmp.clear();
             }
             else if (tmp == "*")
             {
@@ -215,7 +224,14 @@ double PostfixForm::Calculate(const string & _postfixForm, const Variables& _var
         }
         tmp.clear();
     }
+    //
+    for (size_t i = 0; i < _var.countOfVariables; i++)
+    {
+        cout << _var.variables[i] << " = " << _var.values[i] << endl;
+    }
+    //
     return result.Top();
+   
 }
 
 int PostfixForm::getPriorityOfOperator(const char _operator)

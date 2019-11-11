@@ -18,7 +18,7 @@ public:
     void setValues();
 
     double& operator[](int index);
-    const double& operator[](int index) const;
+    const double& operator[](const string&) const;
 
     ~Variables();
 

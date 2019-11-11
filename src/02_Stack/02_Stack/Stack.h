@@ -1,6 +1,8 @@
 #ifndef _STACK_H_
 #define _STACK_H_
 
+#include <exception>
+
 using namespace std;
 
 template<class ValType>

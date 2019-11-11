@@ -1,5 +1,4 @@
 #include "Variables.h"
-
 using namespace std;
 
 Variables::Variables(const string* _variables)
@@ -10,7 +9,7 @@ Variables::Variables(const string* _variables)
     countOfVariables = countOfOperands;
 
     values = new double[countOfVariables];
-    variables = new std::string[countOfVariables];
+    variables = new string[countOfVariables];
 
     for (int i = 0; i < countOfVariables; i++)
     {
@@ -28,8 +27,8 @@ Variables::Variables(const string* _variables)
         if (isNumber(variables[i]))
             values[i] = stod(variables[i], 0);
         else {
-            std::cout << "Введите значение переменной: " << variables[i] << " = ";
-            std::cin >> values[i];
+            cout << "Введите значение переменной: " << variables[i] << " = ";
+            cin >> values[i];
         }
     }
 }
@@ -47,9 +46,19 @@ double & Variables::operator[](int index)
     return values[index];
 }
 
-const double & Variables::operator[](int index) const
+const double & Variables::operator[](const string& _var) const //
 {
-    return values[index];
+    bool found = false;
+    for (size_t i = 0; i < countOfVariables; i++)
+    {
+        if (variables[i] == _var)
+        {
+            return values[i];
+            found = true;
+        }
+    }
+    if (!found) throw exception("Не найдена переменная");
+
 }
 
 bool Variables::isNumber(const string& _str)
