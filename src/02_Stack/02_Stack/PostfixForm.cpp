@@ -48,6 +48,7 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
             operators.Push(_expression[i]);
             if ((typeOfLastSymbol == 0) || (typeOfLastSymbol == 3))
                 throw exception("Incorrect expression 2");
+            countOfLeftBrackets++;
             typeOfLastSymbol = 2;
         }
         else if (_expression[i] == ')')

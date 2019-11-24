@@ -60,7 +60,6 @@ const double Variables::operator[](const string& _name) const
     {
         if (values[i].name == _name) return values[i].value;
     }
-    //throw exception("Unable to find");
 }
 
 const Variables& Variables::operator=(const Variables& temp)
