@@ -9,10 +9,10 @@ template<class ValType>
 class Stack
 {
 private:
-    size_t size, head;
+    int size, head;
     ValType* elems;
 public:
-    Stack(size_t);
+    Stack(int _size = 10);
     Stack(const Stack&);
     ~Stack();
 
@@ -29,9 +29,9 @@ public:
 //------------------------------------------------
 
 template<class ValType>
-Stack<ValType>::Stack(size_t _size):size(_size), head(0)
+Stack<ValType>::Stack(int _size):size(_size), head(0)
 {
-    if (_size <= 0) throw exception("Неположительный размер");
+    if (_size <= 0) throw exception("Incorrect size of stack");
     elems = new ValType[_size];
 }
 
@@ -68,21 +68,21 @@ bool Stack<ValType>::IsEmpty()
 template<class ValType>
 void Stack<ValType>::Push(ValType _next)
 {
-    if (IsFull()) throw "Стек полон";
+    if (IsFull()) throw "Stack is full";
     elems[head++] = _next;
 }
 
 template<class ValType>
 void Stack<ValType>::Pop()
 {
-    if (IsEmpty()) throw exception("Стек пуст");
+    if (IsEmpty()) throw exception("Stack is empty 1");
     --head;
 }
 
 template<class ValType>
 ValType Stack<ValType>::Top()
 {
-    if (IsEmpty()) throw exception("Стек пуст");
+    if (IsEmpty()) throw exception("Stack is empty 2");
         return elems[head - 1];
 }
 

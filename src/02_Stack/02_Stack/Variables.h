@@ -8,22 +8,24 @@ using namespace std;
 
 class Variables
 {
+    struct Variable 
+    {
+        string name;
+        double value;
+    };
+    Variable* values;
+    int size;
+    int head;
 public:
-    int countOfVariables;
-    string* variables;
-    double* values;
-
-    Variables(const string* _variables);
-
-    void setValues();
-
-    double& operator[](int index);
-    const double& operator[](const string&) const;
-
+    Variables(int size_ = 10);
+    Variables(const Variables& temp);
     ~Variables();
 
-private:
-    static bool isNumber(const string& _str);
+    void Push(const string& _name, double _value);
+    int Count(const string& _name) const;
+
+    const double operator[](const string& _name) const;
+    const Variables& operator=(const Variables& temp);
 };
 
 

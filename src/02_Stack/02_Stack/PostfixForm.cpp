@@ -2,8 +2,6 @@
 #include <iostream>
 #include "PostfixForm.h"
 
-string *PostfixForm::operands;
-
 using namespace std;
 
 string PostfixForm::ConvertToPostfixForm(const string & _expression)
@@ -15,8 +13,7 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
     int countOfOperands = 0;
     int countOfLeftBrackets = 0;
     int countOfRightBrackets = 0;
-    char lastSymbol = 0;
-    int indexOfOperand = 0;
+    int typeOfLastSymbol = -1;
 
     Stack<char> operators(lengthOfExpression);
     Stack<string> operands(lengthOfExpression);
@@ -32,15 +29,10 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
             {
                 countOfOperands++;
                 operands.Push(buffer);
-                {
-                    int k = 0;
-                    while ((k < indexOfOperand) &&
-                        (_operands[k++] != _operands[indexOfOperand])) {
-                    };
-                    if (k == indexOfOperand)
-                        _operands[indexOfOperand++] = buffer;
-                }
                 buffer.clear();
+                if (typeOfLastSymbol == 0)
+                    throw exception("Incorrect expression 1");
+                typeOfLastSymbol = 0;
             }
         }
 
@@ -49,67 +41,47 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
             && (_expression[i] != '*') && (_expression[i] != '/')
             && (_expression[i] != '(') && (_expression[i] != ')'))
         {
-            if (countOfOperands == (countOfOperators + 1))
-            throw exception("Неверное выражение");
             buffer.push_back(_expression[i]);
-            if (i == (lengthOfExpression - 1))
-            {
-                countOfOperands++;
-                operands.Push(buffer);
-                {
-                    int k = 0;
-                    while ((k < indexOfOperand) &&
-                        (_operands[k++] != _operands[indexOfOperand])) {
-                    };
-                    if (k == indexOfOperand)
-                        _operands[indexOfOperand++] = buffer;
-                }
-                buffer.clear();
-            }
         }
         else if (_expression[i] == '(')
         {
-            if ((lastSymbol != '+') && (lastSymbol != '-')
-                && (lastSymbol != '*') && (lastSymbol != '/')
-                && (lastSymbol != ' ') && (lastSymbol != '(')
-                && (lastSymbol != 0))   
-                throw exception("Неверное выражение");
-            countOfLeftBrackets++;
             operators.Push(_expression[i]);
+            if ((typeOfLastSymbol == 0) || (typeOfLastSymbol == 3))
+                throw exception("Incorrect expression 2");
+            typeOfLastSymbol = 2;
         }
         else if (_expression[i] == ')')
         {
-            if ((lastSymbol == '+') || (lastSymbol == '-')
-                || (lastSymbol == '*') || (lastSymbol == '/')
-                || (lastSymbol == '('))
-                throw exception("Неверное выражение");
             countOfRightBrackets++;
+            if (countOfRightBrackets > countOfLeftBrackets)
+                throw exception("Incorrect expression 3");
             while (operators.Top() != '(')
             {
                 string tmp;
-                try
-                {
-                    tmp.push_back(operators.Top());
-                    operators.Pop();
-                    operands.Push(tmp);
-                }
-                catch (exception e)
-                {
-                    throw exception("Неверное выражение");
-                }
+                tmp.push_back(operators.Top());
+                operators.Pop();
+                operands.Push(tmp);
             }
             operators.Pop();
+            if (typeOfLastSymbol == 1)
+                throw exception("Incorrect expression 4");
+            typeOfLastSymbol = 3;
         }
         else if (operators.IsEmpty())
         {
-            if (lastSymbol == 0) throw exception("Неверное выражение");
             operators.Push(_expression[i]);
             countOfOperators++;
+            if ((typeOfLastSymbol == 1) || (typeOfLastSymbol == 2))
+                throw exception("Incorrect expression 5");
+            typeOfLastSymbol = 1;
         }
         else if (getPriorityOfOperator(_expression[i]) > getPriorityOfOperator(operators.Top()))
         {
             operators.Push(_expression[i]);
             countOfOperators++;
+            if ((typeOfLastSymbol == 1) || (typeOfLastSymbol == 2))
+                throw exception("Incorrect expression 6");
+            typeOfLastSymbol = 1;
         }
         else
         {
@@ -123,14 +95,22 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
             }
             operators.Push(_expression[i]);
             countOfOperators++;
+            if ((typeOfLastSymbol == 1) || (typeOfLastSymbol == 2)) throw exception("Incorrect expression 7");
+            typeOfLastSymbol = 1;
         }
 
-        if (_expression[i] != ' ')
-            lastSymbol = _expression[i];
     }
 
-    if ((countOfOperands != countOfOperators + 1)
-        || (countOfLeftBrackets != countOfRightBrackets)) throw exception("Неверное выражение");
+    //if ((countOfOperands != countOfOperators + 1)
+       // || (countOfLeftBrackets != countOfRightBrackets)) throw exception("Incorrect expression 8");
+
+    if (buffer.length() != 0)
+    {
+        operands.Push(buffer);
+        buffer.clear();
+        countOfOperands++;
+        typeOfLastSymbol = 0;
+    }
 
     while (!operators.IsEmpty())
     {
@@ -140,98 +120,112 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
         operands.Push(tmp);
     }
 
-    Stack<string> reverseStackOfOperands(lengthOfExpression);
-    for (; !operands.IsEmpty(); operands.Pop())
-        reverseStackOfOperands.Push(operands.Top());
-
-    int startPosition = 0;
-
-    string postfixForm;
-    while (!reverseStackOfOperands.IsEmpty())
+    string expression;
+    while (!operands.IsEmpty())
     {
-        startPosition = postfixForm.length();
-        postfixForm.insert(startPosition, reverseStackOfOperands.Top());
-        reverseStackOfOperands.Pop();
-        buffer = ' ';
-        postfixForm.insert(postfixForm.length(), buffer);
+        expression.insert(0, " ");
+        expression.insert(0, operands.Top());
+        operands.Pop();
     }
-
-    {
-        PostfixForm::operands = new string[countOfOperands + 1];
-        for (int i = 0; i < countOfOperands; i++)
-            PostfixForm::operands[i] = _operands[i];
-        PostfixForm::operands[countOfOperands] = " ";
-        delete[] _operands;
-    }
+    return expression;
     
-    return postfixForm;
 }
 
-double PostfixForm::Calculate(const string & _postfixForm, const Variables& _var)
+double PostfixForm::Calculate(const string & input, const Variables& variables)
 {
-    Stack<double> result(_postfixForm.size());//length
-    string tmp;
-    int value;
+    Stack<double> result(input.length());
+    string buffer;
 
-    for (int i = 0, j = 0; i <_postfixForm.size(); i++)//length
+    for (unsigned i = 0; i < input.size(); i++)
     {
-        if ((_postfixForm[i] != ' ')&& (_postfixForm != "*") && 
-            (_postfixForm != "/") && (_postfixForm != "+") && 
-            (_postfixForm != "-"))
+
+        if ((input[i] != ' ') && (input[i] != '+') && (input[i] != '-') && (input[i] != '*') && (input[i] != '/'))
         {
-            tmp.push_back(_postfixForm[i]);
+            buffer.push_back(input[i]);
         }
         else
         {
-            /*if ((tmp != "*") && (tmp != "/") && (tmp != "+") && (tmp != "-"))
+            if (buffer.size() != 0)
             {
-                int idx = 0;
-                while ((idx < _var.countOfVariables) && (_var.variables[idx++] != tmp));//
-                idx--;
-                result.Push(_var.values[idx]);
+                result.Push(variables[buffer]);
+                buffer.clear();
             }
-            */
-            if (tmp.size() != 0)
+            if (input[i] == '+')
             {
-                result.Push(_var[tmp]);
-                tmp.clear();
-            }
-            else if (tmp == "*")
-            {
-                double b = result.Top(); result.Pop();
-                double a = result.Top(); result.Pop();
-                result.Push(a * b);
-            }
-            else if (tmp == "/")
-            {
-                double b = result.Top(); result.Pop();
-                double a = result.Top(); result.Pop();
-                if (b == 0) throw exception("Деление на ноль");
-                result.Push(a / b);
-            }
-            else if (tmp == "+")
-            {
-                double b = result.Top(); result.Pop();
-                double a = result.Top(); result.Pop();
+                double b = result.Top();
+                result.Pop();
+                double a = result.Top();
+                result.Pop();
                 result.Push(a + b);
             }
-            else if (tmp == "-")
+            else if (input[i] == '-')
             {
-                double b = result.Top(); result.Pop();
-                double a = result.Top(); result.Pop();
+                double b = result.Top();
+                result.Pop();
+                double a = result.Top();
+                result.Pop();
                 result.Push(a - b);
             }
+            else if (input[i] == '*')
+            {
+                double b = result.Top();
+                result.Pop();
+                double a = result.Top();
+                result.Pop();
+                result.Push(a * b);
+            }
+            else if (input[i] == '/')
+            {
+                double b = result.Top();
+                result.Pop();
+                double a = result.Top();
+                result.Pop();
+                if (b == 0) throw exception("Divizion by zero");
+                result.Push(a / b);
+            }
         }
-        tmp.clear();
     }
-    //
-    for (size_t i = 0; i < _var.countOfVariables; i++)
-    {
-        cout << _var.variables[i] << " = " << _var.values[i] << endl;
-    }
-    //
     return result.Top();
-   
+}
+
+Variables PostfixForm::GetVariables(const string& input)
+{
+    string buffer;
+    Variables out;
+
+    for (int i = 0; i < input.size(); i++)
+    {
+        if ((input[i] != '+') && (input[i] != '-') && (input[i] != '*') && (input[i] != '/') && (input[i] != ' '))
+        {
+            buffer.push_back(input[i]);
+        }
+        else if (out.Count(buffer) != 0)
+        {
+            buffer.clear();
+        }
+        else if (buffer.size() != 0)
+        {
+            bool isNumeric = true;
+            for (int j = 0; j < buffer.size(); j++)
+            {
+                if ((buffer[j] < 48) || (buffer[j] > 57)) isNumeric = false;
+            }
+            if (isNumeric)
+            {
+                out.Push(buffer, stoi(buffer));
+            }
+            else
+            {
+                double inputVariable;
+                cout << "Input " << buffer << " ";
+                cin >> inputVariable;
+                out.Push(buffer, inputVariable);
+            }
+            buffer.clear();
+        }
+    }
+
+    return out;
 }
 
 int PostfixForm::getPriorityOfOperator(const char _operator)
@@ -240,9 +234,4 @@ int PostfixForm::getPriorityOfOperator(const char _operator)
     if ((_operator == '+') || (_operator == '-')) return 2;
     if (_operator == ')') return 1;
     return 0;
-}
-
-void PostfixForm::Clear()
-{
-    delete[] operands;
 }
