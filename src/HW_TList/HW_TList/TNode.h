@@ -1,35 +1,66 @@
+#ifndef _TNODE_H_
+#define _TNODE_H_
+#include <iostream>
+using namespace std;
 
-
-
-template<class TData, class TKey>
-class TNode
+template <typename TKey, typename TData>
+struct TNode
 {
-public:
-    TData* pData;
     TKey key;
+    TData* pData;
     TNode* pNext;
 
-    TNode(TData*, TKey);
-    TNode(const TNode&);
-
+    TNode();
+    TNode(TKey _key, TData* _data);
+    TNode(const TNode<TKey, TData>& _tnode);
+    ~TNode();
+    template<class TKey, class TData>
+    friend ostream& operator<<(ostream& os, TNode<TKey, TData>& tmp);
 };
 
-//------------------------------------
-
-template<class TData, class TKey>
-TNode<TData, TKey>::TNode(TData* _pData, TKey _key) : pData(_pData), key(_key), pNext(0)
+template <typename TKey, typename TData>
+TNode<TKey, TData>::TNode()
 {
+    pData = new TData;
+    pNext = nullptr;
 }
 
-template<class TData, class TKey>
-TNode<TData, TKey>::TNode(const TNode<TData, TKey> &node) : pData(node.pData), key(node.key), pNext(0)
+template <typename TKey, typename TData>
+TNode<TKey, TData>::TNode(TKey _key, TData* _data)
 {
+    key = _key;
+    pData = new TData;
+    pData = _data;
+    pNext = nullptr;
+    pData = nullptr;
+    pNext = nullptr;
 }
+
+
+template <typename TKey, typename TData>
+TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
+{
+    key = _tnode.key;
+    pData = new TData;
+    pData = _tnode.pData;
+    pNext = nullptr;
+}
+
+template<typename TKey, typename TData>
+TNode<TKey, TData>::~TNode()
+{
+    if (pData)
+        delete pData;
+};
+
+
 
 template<class TKey, class TData>
-TNode<TData, TKey>::~TNode()
+ostream & operator<<(ostream & os, TNode<TKey, TData>& tmp)
 {
-    Key = 0;
-    data = 0;
-    pNext = 0;
-};
+    if (tmp.pData != nullptr)
+        os << "  " << tmp.key << " ";
+    return os;
+}
+
+#endif
