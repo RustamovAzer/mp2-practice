@@ -102,8 +102,8 @@ string PostfixForm::ConvertToPostfixForm(const string & _expression)
 
     }
 
-    //if ((countOfOperands != countOfOperators + 1)
-       // || (countOfLeftBrackets != countOfRightBrackets)) throw exception("Incorrect expression 8");
+    if ((countOfOperands != countOfOperators + 1)
+        || (countOfLeftBrackets != countOfRightBrackets)) throw exception("Incorrect expression 8");
 
     if (buffer.length() != 0)
     {

@@ -16,12 +16,12 @@ public:
     Stack(const Stack&);
     ~Stack();
 
-    bool IsFull();
-    bool IsEmpty();
+    bool IsFull() const;
+    bool IsEmpty() const;
     
     void Push(ValType _next);
     void Pop();
-    ValType Top();
+    ValType Top() const;
 
     Stack<ValType>& operator=(const Stack<ValType>& _Stack);
 };
@@ -52,14 +52,14 @@ Stack<ValType>::~Stack()
 }
 
 template<class ValType>
-bool Stack<ValType>::IsFull()
+bool Stack<ValType>::IsFull() const
 {
     if (head == size)return true;
     return false;
 }
 
 template<class ValType>
-bool Stack<ValType>::IsEmpty()
+bool Stack<ValType>::IsEmpty() const
 {
     if (head == 0)return true;
     return false;
@@ -80,7 +80,7 @@ void Stack<ValType>::Pop()
 }
 
 template<class ValType>
-ValType Stack<ValType>::Top()
+ValType Stack<ValType>::Top() const
 {
     if (IsEmpty()) throw exception("Stack is empty 2");
         return elems[head - 1];
