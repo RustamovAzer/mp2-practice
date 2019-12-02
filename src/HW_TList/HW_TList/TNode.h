@@ -11,8 +11,8 @@ struct TNode
     TNode* pNext;
 
     TNode();
-    TNode(TKey _key, TData* _data);
-    TNode(const TNode<TKey, TData>& _tnode);
+    TNode(TKey _key, TData* _data, TNode* _pNext = nullptr);
+    TNode(const TNode<TKey, TData>*& _tnode);
     ~TNode();
     template<class TKey, class TData>
     friend ostream& operator<<(ostream& os, TNode<TKey, TData>& tmp);
@@ -26,24 +26,24 @@ TNode<TKey, TData>::TNode()
 }
 
 template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode(TKey _key, TData* _data)
+TNode<TKey, TData>::TNode(TKey _key, TData* _data, TNode* _pNext)
 {
     key = _key;
     pData = new TData;
     pData = _data;
-    pNext = nullptr;
+    pNext = _pNext;
     pData = nullptr;
     pNext = nullptr;
 }
 
 
 template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
+TNode<TKey, TData>::TNode(const TNode<TKey, TData>*& _tnode)
 {
-    key = _tnode.key;
+    key = _tnode->key;
     pData = new TData;
-    pData = _tnode.pData;
-    pNext = nullptr;
+    pData = _tnode->pData;
+    pNext = _tnode->pNext;
 }
 
 template<typename TKey, typename TData>

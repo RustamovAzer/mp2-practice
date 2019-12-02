@@ -64,6 +64,18 @@ void main()
     cout << "  Insert 10 before key 3: ";
     cout << L2;
 
+    L2.InsertBegin(7, a);
+    cout << "  Insert 7 to start: ";
+    cout << L2;
+
+    L2.Push(9, a);
+    cout << "  Insert 9 to end: ";
+    cout << L2;
+
+    L2.Push(11, a);
+    cout << "  Insert 11 to end: ";
+    cout << L2;
+
     L2.Remove(10);
     cout << "  Delete the elemtnt with key 10: ";
     cout << L2;
