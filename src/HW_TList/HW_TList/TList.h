@@ -68,7 +68,7 @@ TList<TKey, TData>::TList(const TList& _tlist)
 template <typename TKey, typename TData>
 TList<TKey, TData>::TList(const TNode<TKey, TData>* _node)
 {
-    pFirst = new TNode<TKey, TData>(*_node));
+    pFirst = new TNode<TKey, TData>(*_node);
     TNode<TKey, TData>* node = _node;
     TNode<TKey, TData>* tmp = pFirst;
     while (tmp->pNext != nullptr)
@@ -127,7 +127,7 @@ TNode<TKey, TData>* TList<TKey, TData>::Search(TKey _key)
 template <typename TKey, typename TData>
 void TList<TKey, TData>::InsertBegin(TKey _key, TData* _data)
 {
-    TNode<TKey, TData>* newFirstNode = new TNode<TKey, TData>(_key, _data, pFirst);
+    TNode<TKey, TData>* newFirstNode = new TNode<TKey, TData>(_key, _data, pFirst); 
     if (pCurrent == pFirst) pPrevious = newFirstNode;
     pFirst = newFirstNode;        
 }
@@ -153,8 +153,8 @@ void TList<TKey, TData>::Push(TKey _key, TData* _data)
 template <typename TKey, typename TData>
 void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData* _data)
 {
-    if (pFirst == nullptr) 
-        throw exception("List is empty");
+    if (pFirst == nullptr) return;
+        //throw exception("List is empty");
     if (pFirst->key == _key)
     {
         InsertBegin(_newKey, _data);
@@ -178,7 +178,7 @@ template <typename TKey, typename TData>
 void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData* _data)
 {
     if (pFirst == nullptr) return;
-        throw exception("List is empty");
+        //throw exception("List is empty");
     TNode<TKey, TData>* prevNode = pFirst;
     while ((prevNode != nullptr) && (prevNode->key != _key))
     {
@@ -198,7 +198,7 @@ template <typename TKey, typename TData>
 void TList<TKey, TData>::Remove(TKey _key)
 {
     if (pFirst == nullptr) return;
-        throw exception("List is empty");
+        //throw exception("List is empty");
     if (pFirst->key == _key)
     {
         bool FirstNodeWasCurrent = (pCurrent == pFirst);
@@ -220,7 +220,7 @@ void TList<TKey, TData>::Remove(TKey _key)
     TNode<TKey, TData>* nextNode = prevNode->pNext->pNext;
     bool wasRemovedNodeCurrent = (pCurrent == prevNode->pNext);
     bool wasRemovedNodeNext = (pNext == prevNode->pNext);
-    delete prevNode->pNext;
+    delete prevNode->pNext;;
     prevNode->pNext = nextNode;
     if (wasRemovedNodeCurrent) pCurrent = nullptr;
     if (wasRemovedNodeNext) pNext = nullptr;

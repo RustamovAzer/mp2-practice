@@ -32,9 +32,11 @@ TNode<TKey, TData>::TNode(TKey _key, TData* _data, TNode* _pNext)
     pData = new TData;
     pData = _data;
     pNext = _pNext;
-    pData = nullptr;
-    pNext = nullptr;
+    /*pData = nullptr;
+    pNext = nullptr;*/
 }
+
+
 
 
 template <typename TKey, typename TData>
@@ -49,8 +51,9 @@ TNode<TKey, TData>::TNode(const TNode<TKey, TData>*& _tnode)
 template<typename TKey, typename TData>
 TNode<TKey, TData>::~TNode()
 {
-    if (pData)
+    if(pData != nullptr)
         delete pData;
+    pData = nullptr;
 };
 
 
