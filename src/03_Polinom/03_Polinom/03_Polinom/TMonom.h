@@ -81,12 +81,11 @@ public:
     TMonom(const string _expression);
 
     ~TMonom();
-    template<class int, class double>
+    template<>
     friend ostream& operator<<(ostream& os, TMonom<int, double>& tmp);
 };
 
 
-template <>
 TMonom<int, double>::TMonom(int _key, double _data, TMonom* _pNext)
 {
     key = _key;
