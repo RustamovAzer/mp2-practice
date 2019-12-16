@@ -18,7 +18,7 @@
     <ClInclude Include="TMonom.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Polinom.h">
+    <ClInclude Include="TPolinom.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

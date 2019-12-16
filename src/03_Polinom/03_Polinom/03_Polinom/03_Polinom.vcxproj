@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Polinom.h" />
+    <ClInclude Include="TPolinom.h" />
     <ClInclude Include="TMonom.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
