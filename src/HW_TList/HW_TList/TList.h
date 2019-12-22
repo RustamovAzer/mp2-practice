@@ -1,15 +1,15 @@
-#ifndef _TLIST_H_
-#define _TLIST_H_
+#ifndef __TLIST_H__
+#define __TLIST_H__
+#include "MyExceptions.h"
+//#include "TNode.h"
+#include "Monom.h"
 
-#include "TNode.h"
-#include <iostream>
-
-using namespace std;
+//~~~~~~~~~~~~~~~~~~~~~~~~ class TList ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 template <typename TKey, typename TData>
 class TList
 {
-private:
+protected:
     TNode<TKey, TData>* pFirst;
     TNode<TKey, TData>* pNext;
     TNode<TKey, TData>* pPrevious;
@@ -21,12 +21,15 @@ public:
     TList(const TNode<TKey, TData>* _tnode);
     ~TList();
 
+    void InsertBegin(TKey _newKey, TData _data);
+    void InsertEnd(TKey _newKey, TData _data);
+    void InsertBefore(TKey _key, TKey _newKey, TData _data);
+    void InsertAfter(TKey _key, TKey _newKey, TData _data);
 
-    TNode<TKey, TData>* Search(TKey);
-    void InsertBegin(TKey _key, TData* _data);
-    void Push(TKey _key, TData* _data);
-    void InsertBefore(TKey _key, TKey _newKey, TData* _data);
-    void InsertAfter(TKey _key, TKey _newKey, TData* _data);
+    void InsertBegin(const TNode<TKey, TData>& _tnode);
+    void InsertEnd(const TNode<TKey, TData>& _tnode);
+    void InsertBefore(TKey _key, const TNode<TKey, TData>& _tnode);
+    void InsertAfter(TKey _key, const TNode<TKey, TData>& _tnode);
 
     void Remove(TKey _key);
 
@@ -34,10 +37,16 @@ public:
     void Next();
 
     bool IsEnded() const;
+    bool IsEmpty() const;
 
-    template<class TKey, class TData>
-    friend ostream& operator<<(ostream& os, TList<TKey, TData>& tmp);
+    TKey getCurrentNodeKey() const;
+    TData getCurrentNodeData() const;
+
+    template <typename TKey, typename TData>
+    friend ostream& operator<<(ostream& out, const TList<TKey, TData>& _tlist);
 };
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 template <typename TKey, typename TData>
 TList<TKey, TData>::TList()
@@ -52,35 +61,31 @@ template <typename TKey, typename TData>
 TList<TKey, TData>::TList(const TList& _tlist)
 {
     pFirst = new TNode<TKey, TData>(*(_tlist.pFirst));
-    TNode<TKey, TData>* _node = pFirst;
+    TNode<TKey, TData>* node = pFirst;
     TNode<TKey, TData>* tmp = _tlist.pFirst;
-    while (tmp->pNext != nullptr)
+    if (tmp != nullptr)
     {
-        _node->pNext = new TNode<TKey, TData>(*(tmp->pNext));
-        _node = _node->pNext;
-        tmp = tmp->pNext;
+        while (tmp->pNext != nullptr)
+        {
+            node->pNext = new TNode<TKey, TData>(*(tmp->pNext));
+            node = node->pNext;
+            tmp = tmp->pNext;
+        }
+        pPrevious = nullptr;
+        pCurrent = pFirst;
+        if (pFirst->pNext != nullptr)
+            pNext = pFirst->pNext;
+
     }
-    pPrevious = nullptr;    
-    pCurrent = pFirst;
-    pNext = pFirst->pNext;
 }
 
 template <typename TKey, typename TData>
-TList<TKey, TData>::TList(const TNode<TKey, TData>* _node)
+TList<TKey, TData>::TList(const TNode<TKey, TData> * _tnode)
 {
-    pFirst = new TNode<TKey, TData>(*_node);
-    TNode<TKey, TData>* node = _node;
-    TNode<TKey, TData>* tmp = pFirst;
-    while (tmp->pNext != nullptr)
-    {
-        node->pNext = new TNode<TKey, TData>(*(tmp->pNext));
-        node = node->pNext;
-        tmp = tmp->pNext;
-    }
-    pPrevious = nullptr;
+    pFirst = new TNode<TKey, TData>(*_tnode);
     pCurrent = pFirst;
-    pNext = pFirst->pNext;
-    
+    pPrevious = nullptr;
+    pNext = nullptr;
 }
 
 template <typename TKey, typename TData>
@@ -96,134 +101,144 @@ TList<TKey, TData>::~TList()
     }
 }
 
-template<class TKey, class TData>
-TNode<TKey, TData>* TList<TKey, TData>::Search(TKey _key)
-{
-    TNode<TKey, TData>* prev = pPrevious;
-    TNode<TKey, TData>* next = pNext;
-    TNode<TKey, TData>* curr = pCurrent;
-
-    Reset();
-    while (!IsEnded())
-    {
-        if (pCurrent->key == _key)
-        {
-            TNode<TKey, TData>* find = pCurrent;
-            pCurrent = curr;
-            pPrevious = prev;
-            pNext = next;
-            return find;
-        }
-        Next();
-    };
-
-    pPrevious = prev;
-    pNext = next;
-    pCurrent = curr;
-
-    return nullptr;
-};
-
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertBegin(TKey _key, TData* _data)
-{
-    TNode<TKey, TData>* newFirstNode = new TNode<TKey, TData>(_key, _data, pFirst); 
-    if (pCurrent == pFirst) pPrevious = newFirstNode;
-    pFirst = newFirstNode;        
-}
-
-template <typename TKey, typename TData>
-void TList<TKey, TData>::Push(TKey _key, TData* _data)
+void TList<TKey, TData>::InsertBegin(TKey _newKey, TData _data)
 {
     if (pFirst == nullptr)
     {
-        pFirst = new TNode<TKey, TData>(_key, _data);
+        pFirst = new TNode<TKey, TData>(_newKey, _data);
         pCurrent = pFirst;
         return;
     }
-    TNode<TKey, TData>* prevToLastNode = pFirst;
-    while (prevToLastNode->pNext != nullptr)
-    {
-        prevToLastNode = prevToLastNode->pNext;
-    }
-    prevToLastNode->pNext = new TNode<TKey, TData>(_key, _data);
-    if (pCurrent == prevToLastNode) pNext = prevToLastNode->pNext;
+    TNode<TKey, TData>* newFirstNode = new TNode<TKey, TData>(_newKey, _data);
+    newFirstNode->pNext = pFirst;
+    if (pCurrent == pFirst)
+        pPrevious = newFirstNode;
+    pFirst = newFirstNode;
 }
 
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData* _data)
+void TList<TKey, TData>::InsertEnd(TKey _newKey, TData _data)
+{
+    if (pFirst == nullptr)
+    {
+        pFirst = new TNode<TKey, TData>(_newKey, _data);
+        pCurrent = pFirst;
+        return;
+    }
+    TNode<TKey, TData>* lastNode = new TNode<TKey, TData>(_newKey, _data);
+    TNode<TKey, TData>* penultimateNode = pFirst;
+    while (penultimateNode->pNext != nullptr)
+    {
+        penultimateNode = penultimateNode->pNext;
+    }
+    penultimateNode->pNext = lastNode;
+    if (pCurrent = penultimateNode)
+        pNext = lastNode;
+}
+
+template <typename TKey, typename TData>
+void TList<TKey, TData>::InsertBefore(TKey _key, TKey _newKey, TData _data)
 {
     if (pFirst == nullptr) return;
-        //throw exception("List is empty");
     if (pFirst->key == _key)
     {
         InsertBegin(_newKey, _data);
         return;
     }
-    TNode<TKey, TData>* prevNode = pFirst;
-    while ((prevNode->pNext != nullptr) && (prevNode->pNext->key != _key))
+    TNode<TKey, TData>* previousNode = pFirst;
+    while ((previousNode->pNext != nullptr) && (previousNode->pNext->key != _key))
     {
-        prevNode = prevNode->pNext;
+        previousNode = previousNode->pNext;
     }
-    if (prevNode->pNext == nullptr)
-        throw exception("No node in list");
-    
-    TNode<TKey, TData>* newNode = new TNode<TKey, TData>(_newKey, _data, prevNode->pNext);
-    if (pCurrent == prevNode->pNext) pPrevious = newNode;
-    prevNode->pNext = newNode;
-    if (pCurrent == prevNode) pNext = newNode;
+    if (previousNode->pNext == nullptr)
+        throw ExceptionNoNodeInList(__LINE__, __FILE__);
+    TNode<TKey, TData>* nextNode = previousNode->pNext;
+    TNode<TKey, TData>* newNode = new TNode<TKey, TData>(_newKey, _data);
+    previousNode->pNext = newNode;
+    newNode->pNext = nextNode;
+    if (pCurrent == previousNode)
+        pNext = newNode;
+    if (pCurrent == nextNode)
+        pPrevious = newNode;
 }
 
 template <typename TKey, typename TData>
-void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData* _data)
+void TList<TKey, TData>::InsertAfter(TKey _key, TKey _newKey, TData _data)
 {
     if (pFirst == nullptr) return;
-        //throw exception("List is empty");
-    TNode<TKey, TData>* prevNode = pFirst;
-    while ((prevNode != nullptr) && (prevNode->key != _key))
+    TNode<TKey, TData>* previousNode = pFirst;
+    while ((previousNode != nullptr) && (previousNode->key != _key))
     {
-        prevNode = prevNode->pNext;
+        previousNode = previousNode->pNext;
     }
-    if (prevNode == nullptr)
-        throw exception("No node in list");
-    TNode<TKey, TData>* nextNode = prevNode->pNext;
+    if (previousNode == nullptr)
+        throw ExceptionNoNodeInList(__LINE__, __FILE__);
+    TNode<TKey, TData>* nextNode = previousNode->pNext;
     TNode<TKey, TData>* newNode = new TNode<TKey, TData>(_newKey, _data);
-    prevNode->pNext = newNode;
+    previousNode->pNext = newNode;
     newNode->pNext = nextNode;
-    if (pCurrent == prevNode) pNext = newNode;
-    if (pCurrent == nextNode) pPrevious = newNode;
+    if (pCurrent == previousNode)
+        pNext = newNode;
+    if (pCurrent == nextNode)
+        pPrevious = newNode;
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertBegin(const TNode<TKey, TData>& _tnode)
+{
+    InsertBegin(_tnode.key, _tnode.data);
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertEnd(const TNode<TKey, TData>& _tnode)
+{
+    InsertEnd(_tnode.key, _tnode.data);
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertBefore(TKey _key, const TNode<TKey, TData>& _tnode)
+{
+    InsertBefore(_key, _tnode.key, _tnode.data);
+}
+
+template<typename TKey, typename TData>
+void TList<TKey, TData>::InsertAfter(TKey _key, const TNode<TKey, TData>& _tnode)
+{
+    InsertAfter(_key, _tnode.key, _tnode.data);
 }
 
 template <typename TKey, typename TData>
 void TList<TKey, TData>::Remove(TKey _key)
 {
     if (pFirst == nullptr) return;
-        //throw exception("List is empty");
     if (pFirst->key == _key)
     {
-        bool FirstNodeWasCurrent = (pCurrent == pFirst);
-        bool FirstNodeWasPrevious = (pPrevious == pFirst);
+        bool wasFirstNodeCurrent = (pCurrent == pFirst);
+        bool wasFirstNodePrevious = (pPrevious == pFirst);
         TNode<TKey, TData>* nextNode = pFirst->pNext;
         delete pFirst;
         pFirst = nextNode;
-        if (FirstNodeWasCurrent) pCurrent = nullptr;
-        if (FirstNodeWasPrevious) pPrevious = nullptr;
+        if (wasFirstNodeCurrent)  pCurrent = nullptr;
+        if (wasFirstNodePrevious) pPrevious = nullptr;
         return;
     }
-    TNode<TKey, TData>* prevNode = pFirst;
-    while ((prevNode->pNext != nullptr) && (prevNode->pNext->key != _key))
+    TNode<TKey, TData>* previousNode = pFirst;
+    while ((previousNode->pNext != nullptr) && (previousNode->pNext->key != _key))
     {
-        prevNode = prevNode->pNext;
+        previousNode = previousNode->pNext;
     }
-    if (prevNode->pNext == nullptr)       
-        throw exception("No node in list");
-    TNode<TKey, TData>* nextNode = prevNode->pNext->pNext;
-    bool wasRemovedNodeCurrent = (pCurrent == prevNode->pNext);
-    bool wasRemovedNodeNext = (pNext == prevNode->pNext);
-    delete prevNode->pNext;;
-    prevNode->pNext = nextNode;
-    if (wasRemovedNodeCurrent) pCurrent = nullptr;
-    if (wasRemovedNodeNext) pNext = nullptr;
+    if (previousNode->pNext == nullptr)
+        throw ExceptionNoNodeInList(__LINE__, __FILE__);
+    TNode<TKey, TData>* nextNode = previousNode->pNext->pNext;
+    bool wasRemovingNodeCurrent = (pCurrent == previousNode->pNext);
+    bool wasRemovingNodeNext = (pNext == previousNode->pNext);
+    delete previousNode->pNext;
+    previousNode->pNext = nextNode;
+    if (wasRemovingNodeCurrent)
+        pCurrent = nullptr;
+    if (wasRemovingNodeNext)
+        pNext = nullptr;
 }
 
 template <typename TKey, typename TData>
@@ -231,66 +246,71 @@ void TList<TKey, TData>::Reset()
 {
     pCurrent = pFirst;
     pPrevious = nullptr;
-    if (pFirst)
-    {
+    if (pFirst != nullptr)
         pNext = pFirst->pNext;
-    }
-    else
-    {
-        pNext = nullptr;
-    }
 }
 
 template <typename TKey, typename TData>
 bool TList<TKey, TData>::IsEnded() const
 {
-    return (pNext == nullptr);
+    if (pCurrent == nullptr)
+        return true;
+    return false;
+}
+
+template <typename TKey, typename TData>
+bool TList<TKey, TData>::IsEmpty() const
+{
+    return (pFirst == nullptr);
 }
 
 template <typename TKey, typename TData>
 void TList<TKey, TData>::Next()
 {
-    if (IsEnded())
-        throw exception("No node in list");
-    if (pCurrent != nullptr)
+    if (IsEnded() == true)
+        throw ExceptionListIsEnded(__LINE__, __FILE__);
+    pPrevious = pCurrent;
+    pCurrent = pNext;
+    if (pNext != nullptr)
     {
-        pPrevious = pCurrent;
-        pCurrent = pNext;
-        pNext = pNext->pNext;
-    }
-    else
-    {
-        if (pNext == 0)
-        {
-            pCurrent = pNext;
-        }
-        pPrevious = nullptr;
         pNext = pNext->pNext;
     }
 }
-template<class TKey, class TData>
-ostream& operator<<(ostream& os, TList<TKey, TData>& tmp)
+
+template <typename TKey, typename TData>
+TKey TList<TKey, TData>::getCurrentNodeKey() const
 {
-    TNode<TKey, TData>* curr = tmp.pCurrent;
-    TNode<TKey, TData>* prev = tmp.pPrevious;
-    TNode<TKey, TData>* next = tmp.pNext;
-
-    tmp.Reset();
-
-    while (!tmp.IsEnded())
+    if (pCurrent == nullptr)
     {
-        os << tmp.pCurrent->key << " ";
-        tmp.Next();
+        throw ExceptionNoNodeInList(__LINE__, __FILE__);
+
     }
-
-    os << tmp.pCurrent->key << " " << endl;
-
-    tmp.pCurrent = curr;
-    tmp.pPrevious = prev;
-    tmp.pNext = next;
-
-    return os;
+    return pCurrent->key;
 }
 
+template <typename TKey, typename TData>
+TData TList<TKey, TData>::getCurrentNodeData() const
+{
+    if (pCurrent == nullptr)
+    {
+        throw ExceptionNoNodeInList(__LINE__, __FILE__);
 
-#endif
+    }
+    return pCurrent->data;
+}
+
+template <typename TKey, typename TData>
+ostream& operator<<(ostream& out, const TList<TKey, TData>& _tlist)
+{
+    TNode<TKey, TData> *node = _tlist.pFirst;
+    while (node != nullptr)
+    {
+        out << *(node);
+        if (node->pNext != nullptr)
+            out << " --> ";
+        node = node->pNext;
+    }
+    return out;
+};
+
+#endif // !__TLIST_H__

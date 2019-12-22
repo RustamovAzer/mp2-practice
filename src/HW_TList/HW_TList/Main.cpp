@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include "TList.h"
 
 
@@ -78,5 +79,5 @@ int main()
     {
         cout << e.what() << endl;
     };
-    system("pause");
+    
 }
