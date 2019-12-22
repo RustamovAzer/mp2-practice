@@ -1,27 +1,15 @@
 #include <iostream>
-#include <random>
-#include <time.h>
-
 #include "TPolynom.h"
 
 
 int main()
 {
     TPolynom first, second;
-    srand((unsigned)time(0));
-    std::cout << "Constructor from list test" << std::endl;
-    TList<unsigned, double> list;
-    for (int i = 0; i < 6; i++)
-    {
-        list.InsertToStart(rand() % 1000, 1 + rand() % 100);
-    }
-    std::cout << TPolynom(list) << std::endl;
-
     try
     {
-        std::cout << "Enter first polynom:" << std::endl;
+        std::cout << "Enter the first polynom:" << std::endl;
         std::cin >> first;
-        std::cout << "Enter second polynom:" << std::endl;
+        std::cout << "Enter the second polynom:" << std::endl;
         std::cin >> second;
     }
     catch (exception& e)
