@@ -3,71 +3,50 @@
 #include <iostream>
 using namespace std;
 
-template <typename TKey, typename TData>
-struct TNode
+template<class TKey, class TData>
+class TNode
 {
-    TKey key;
-    TData data;
-    TNode* pNext;
+public:
+    TKey Key;
+    TData* data;
+    TNode<TKey, TData>* pNext;
 
     TNode();
-    TNode(TKey _key, TData _data);
-    TNode(const TNode<TKey, TData>& _tnode);
+    TNode(const TNode&);
+    TNode(TKey, TData, TNode* node = nullptr);
     ~TNode();
-
-    const TNode<TKey, TData>& operator=(const TNode<TKey, TData>& _tnode);
-
-    template <typename TKey, typename TData>
-    friend ostream& operator<<(ostream& out, const TNode<TKey, TData>& _tnode);
 };
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
-template <typename TKey, typename TData>
+//////////////////////////////////////////////////////////
+template<class TKey, class TData>
 TNode<TKey, TData>::TNode()
 {
-    key = 0;
+    Key = 0;
+    data = nullptr;
     pNext = nullptr;
-}
-
-template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode(TKey _key, TData _data)
-{
-    pNext = nullptr;
-    key = _key;
-    data = _data;
-}
-
-template <typename TKey, typename TData>
-TNode<TKey, TData>::TNode(const TNode<TKey, TData>& _tnode)
-{
-    data = _tnode.data;
-    pNext = nullptr;
-    key = _tnode.key;
-}
-
-template<typename TKey, typename TData>
-TNode<TKey, TData>::~TNode()
-{
-    pNext = nullptr;
-}
-
-template<typename TKey, typename TData>
-const TNode<TKey, TData>& TNode<TKey, TData>::operator=(const TNode<TKey, TData>& _tnode)
-{
-    if (this != &_tnode)
-    {
-        key = _tnode.key;
-        data = _tnode.data;
-    }
-    return *this;
-}
-
-template <typename TKey, typename TData>
-ostream& operator<<(ostream& out, const TNode<TKey, TData>& node)
-{
-    out << "[" << node.key << " : " << node.data << "]";
-    return out;
 };
 
-#endif // !__TNODE_H__
+template<class TKey, class TData>
+TNode<TKey, TData>::TNode(TKey _key, TData _data, TNode<TKey, TData>* node)
+{
+    Key = _key;
+    data = &_data;
+    pNext = node;
+};
+
+template<class TKey, class TData>
+TNode<TKey, TData>::TNode(const TNode<TKey, TData>& tmp)
+{
+    Key = tmp.Key;
+    pNext = nullptr;
+    data = tmp.data;
+};
+
+template<class TKey, class TData>
+TNode<TKey, TData>::~TNode()
+{
+    Key = 0;
+    data = nullptr;
+    pNext = nullptr;
+};
+
+#endif
