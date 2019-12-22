@@ -1,168 +1,89 @@
 #ifndef _TMONOM_H_
 #define _TMONOM_H_
+
 #include <iostream>
-#include <string>
-using namespace std;
+#include "TNode.h"
 
-
-template <typename TKey, typename TData>
-class TMonom
-{
-    TKey key;
-    TData data;
-    TMonom* pNext;
-
-    TMonom();
-    TMonom(TKey _key, TData _data, TMonom* _pNext = nullptr);
-    TMonom(const TMonom<TKey, TData>*& _tnode);
-    ~TMonom();
-    template<class TKey, class TData>
-    friend ostream& operator<<(ostream& os, TMonom<TKey, TData>& tmp);
-};
-
-template <typename TKey, typename TData>
-TMonom<TKey, TData>::TMonom()
-{
-    pNext = nullptr;
-}
-
-template <typename TKey, typename TData>
-TMonom<TKey, TData>::TMonom(TKey _key, TData _data, TMonom* _pNext)
-{
-    key = _key;
-    data = _data;
-    pNext = _pNext;
-    data = nullptr;
-    pNext = nullptr;
-}
-
-
-template <typename TKey, typename TData>
-TMonom<TKey, TData>::TMonom(const TMonom<TKey, TData>*& _tnode)
-{
-    key = _tnode->key;
-    data = new TData;
-    data = _tnode->data;
-    pNext = _tnode->pNext;
-}
-
-template<typename TKey, typename TData>
-TMonom<TKey, TData>::~TMonom()
-{
-}
-
-
-
-template<class TKey, class TData>
-ostream & operator<<(ostream & os, TMonom<TKey, TData>& tmp)
-{
-    os << "  " << tmp.key << " ";
-    return os;
-}
-
-/////////////////////////////////////////////////
-
-
-using namespace std;
-
-const int NPOS = -1;
-
-template <>
-class TMonom<int, double>
+class TMonom : public TNode<unsigned, double>
 {
 public:
-    int key;
-    double data;
-    TMonom* pNext;
-
-    TMonom();
-    TMonom(int _key, double _data, TMonom* _pNext = nullptr);
-    TMonom(const TMonom<int, double>*& _tnode);
-    TMonom(const string _expression);
-
+    TMonom(unsigned key_, const double* pData_);
+    TMonom(unsigned key_, const double& data);
+    TMonom(const TMonom& temp);
+    TMonom(const TNode<unsigned, double>& temp);
     ~TMonom();
-    template<>
-    friend ostream& operator<<(ostream& os, TMonom<int, double>& tmp);
+
+    TMonom operator*(const TMonom& temp);
+
+    friend std::ostream& operator<<(std::ostream& out, const TMonom& monom);
+
+    friend TMonom operator-(const TMonom& temp);
 };
 
-
-TMonom<int, double>::TMonom(int _key, double _data, TMonom* _pNext)
+TMonom::TMonom(unsigned key_, const double* pData_) : TNode<unsigned, double>(key_, pData_)
 {
-    key = _key;
-    data = _data;
-    pNext = _pNext;
-    pNext = nullptr;
+    if (key > 999 || *pData == 0) throw exception("Incorrect degree");
+}
+
+TMonom::TMonom(unsigned key_, const double& data) : TNode<unsigned, double>(key_, data)
+{
+    if (key > 999 || *pData == 0) throw exception("Incorrect degree");
+}
+
+TMonom::TMonom(const TMonom& temp) : TNode<unsigned, double>(temp)
+{
+    if (key > 999 || *pData == 0) throw exception("Incorrect degree");
+}
+
+TMonom::TMonom(const TNode<unsigned, double>& temp) : TNode<unsigned, double>(temp)
+{
+    if (key > 999 || *pData == 0) throw exception("Incorrect degree");
+}
+
+TMonom::~TMonom()
+{
+
+}
+
+TMonom TMonom::operator*(const TMonom& temp)
+{
+    if ((key / 100 + temp.key / 100) >= 10) 
+        throw exception("Incorrect degree");
+    if ((key % 100 / 10 + temp.key % 100 / 10) >= 10) 
+        throw exception("Incorrect degree");
+    if ((key % 10 + temp.key % 10) >= 10) 
+        throw exception("Incorrect degree");
+    TMonom out(key + temp.key, *pData * *(temp.pData));
+    return out;
 }
 
 
-
-TMonom<int, double>::TMonom<int, double>(const TMonom<int, double>*& _tnode)
+std::ostream& operator<<(std::ostream& out, const TMonom& monom)
 {
-    key = _tnode->key;
-    data = _tnode->data;
-    pNext = _tnode->pNext;
+    if (*(monom.pData) > 0)
+        out << "+";
+    else
+        out << "-";
+    if ((*(monom.pData) != 1 && *(monom.pData) != -1) || monom.key == 0)
+        out << abs(*(monom.pData));
+    if (monom.key / 100 == 1)
+        out << "x";
+    if ((monom.key / 100 != 0)&&(monom.key / 100 != 1))
+        out << "x^" << (monom.key / 100);
+    if (monom.key % 100 / 10 == 1)
+        out << "y";
+    if ((monom.key % 100 / 10 != 0) && (monom.key % 100 / 10 != 1))
+        out << "y^" << (monom.key % 100 / 10);
+    if (monom.key % 10 == 1)
+        out << "z";
+    if ((monom.key % 10 != 0) && (monom.key % 10 != 1))
+        out << "z^" << (monom.key % 10);
+    return out;
 }
 
-
-TMonom<int, double>::TMonom<int, double>(string _expression)
+TMonom operator-(const TMonom& temp)
 {
-    key = 0;
-    double neg = 1;
-    if (_expression[0] = '-')
-        neg = -1;
-    int start_of_coef = _expression.find_first_of("1234567890");
-    int end_of_coef = _expression.find_first_not_of("1234567890.");
-        if (end_of_coef == NPOS)
-            throw exception("Invalid monom");
-    string coefstr = _expression.substr(start_of_coef, end_of_coef - start_of_coef);
-    data = neg * stod(coefstr);
-
-    int operand = _expression.find_first_of("xyz");
-    if (_expression[operand] == 'x')
-    {
-        if (_expression[operand + 1] == '^')
-        {
-            char a = _expression[operand + 2];
-            int ia = a - '0';
-            key += 100 * ia;
-            operand = operand + 2;
-        }
-        key += 100;
-        operand = operand + 1;
-    }
-    if (_expression[operand] == 'y')
-    {
-        if (_expression[operand + 1] == '^')
-        {
-            char a = _expression[operand + 2];
-            int ia = a - '0';
-            key += 100 * ia;
-            operand = operand + 2;
-        }
-        key += 10;
-        operand = operand + 1;
-    }
-    if (_expression[operand] == 'z')
-    {
-        if (_expression[operand + 1] == '^')
-        {
-            char a = _expression[operand + 2];
-            int ia = a - '0';
-            key += 100 * ia;
-            operand = operand + 2;
-        }
-        key += 1;
-        operand = operand + 1;
-    }
+    TMonom out(temp.key, -*(temp.pData));
+    return out;
 }
-
-
-template<>
-ostream & operator<<(ostream & os, TMonom<int, double>& tmp)
-{
-    if (tmp.data != 0)
-        os << "  " << tmp.data << "x^"<<tmp.key / 100 <<"y^"<<(tmp.key % 100) / 10 <<"z^"<<tmp.key % 10<<" ";
-    return os;
-}
-
 #endif
