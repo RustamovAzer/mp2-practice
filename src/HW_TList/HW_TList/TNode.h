@@ -4,49 +4,81 @@
 using namespace std;
 
 template<class TKey, class TData>
-class TNode
+struct  TNode
 {
-public:
     TKey Key;
-    TData* data;
+    TData* pData;
     TNode<TKey, TData>* pNext;
 
     TNode();
-    TNode(const TNode&);
-    TNode(TKey, TData, TNode* node = nullptr);
+    TNode(TKey key_, const TData* pData_);
+    TNode(TKey key_, const TData& data);
+    TNode(const TNode<TKey, TData>& temp);
     ~TNode();
+
+    TNode<TKey, TData>& operator=(const TNode<TKey, TData>& temp);
+
+    template <typename TKey, typename TData>
+    friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& node);
 };
-//////////////////////////////////////////////////////////
-template<class TKey, class TData>
+
+template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode()
 {
-    Key = 0;
-    data = nullptr;
+    key = NULL;
+    pData = new TData;
     pNext = nullptr;
-};
+}
 
-template<class TKey, class TData>
-TNode<TKey, TData>::TNode(TKey _key, TData _data, TNode<TKey, TData>* node)
+template <typename TKey, typename TData>
+TNode<TKey, TData>::TNode(TKey key_, const TData* pData_)
 {
-    Key = _key;
-    data = &_data;
-    pNext = node;
-};
-
-template<class TKey, class TData>
-TNode<TKey, TData>::TNode(const TNode<TKey, TData>& tmp)
-{
-    Key = tmp.Key;
+    key = key_;
+    pData = new TData;
+    *pData = *pData_;
     pNext = nullptr;
-    data = tmp.data;
-};
+}
 
-template<class TKey, class TData>
+template <typename TKey, typename TData>
+TNode<TKey, TData>::TNode(TKey key_, const TData& data_)
+{
+    key = key_;
+    pData = new TData;
+    *pData = data_;
+    pNext = nullptr;
+}
+
+template <typename TKey, typename TData>
+TNode<TKey, TData>::TNode(const TNode<TKey, TData>& temp)
+{
+    key = temp.key;
+    pData = new TData;
+    *pData = *(temp.pData);
+    pNext = nullptr;
+}
+
+template <typename TKey, typename TData>
 TNode<TKey, TData>::~TNode()
 {
-    Key = 0;
-    data = nullptr;
-    pNext = nullptr;
-};
+    delete pData;
+}
 
+template <typename TKey, typename TData>
+TNode<TKey, TData>& TNode<TKey, TData>::operator=(const TNode<TKey, TData>& temp)
+{
+    if (this == &temp)
+    {
+        return *this;
+    }
+    key = temp.key;
+    *pData = *(temp.pData);
+    return *this;
+}
+
+template <typename TKey, typename TData>
+std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& node)
+{
+    out << "Key: " << node.key << " Data: " << *(node.pData);
+    return out;
+}
 #endif
