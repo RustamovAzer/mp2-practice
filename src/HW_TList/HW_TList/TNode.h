@@ -25,7 +25,7 @@ struct  TNode
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode()
 {
-    key = NULL;
+    Key = NULL;
     pData = new TData;
     pNext = nullptr;
 }
@@ -33,7 +33,7 @@ TNode<TKey, TData>::TNode()
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode(TKey key_, const TData* pData_)
 {
-    key = key_;
+    Key = key_;
     pData = new TData;
     *pData = *pData_;
     pNext = nullptr;
@@ -42,7 +42,7 @@ TNode<TKey, TData>::TNode(TKey key_, const TData* pData_)
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode(TKey key_, const TData& data_)
 {
-    key = key_;
+    Key = key_;
     pData = new TData;
     *pData = data_;
     pNext = nullptr;
@@ -51,7 +51,7 @@ TNode<TKey, TData>::TNode(TKey key_, const TData& data_)
 template <typename TKey, typename TData>
 TNode<TKey, TData>::TNode(const TNode<TKey, TData>& temp)
 {
-    key = temp.key;
+    Key = temp.Key;
     pData = new TData;
     *pData = *(temp.pData);
     pNext = nullptr;
@@ -70,7 +70,7 @@ TNode<TKey, TData>& TNode<TKey, TData>::operator=(const TNode<TKey, TData>& temp
     {
         return *this;
     }
-    key = temp.key;
+    Key = temp.Key;
     *pData = *(temp.pData);
     return *this;
 }
@@ -78,7 +78,7 @@ TNode<TKey, TData>& TNode<TKey, TData>::operator=(const TNode<TKey, TData>& temp
 template <typename TKey, typename TData>
 std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& node)
 {
-    out << "Key: " << node.key << " Data: " << *(node.pData);
+    out << "[ " << node.Key << " | " << *(node.pData)<< " ]";
     return out;
 }
 #endif

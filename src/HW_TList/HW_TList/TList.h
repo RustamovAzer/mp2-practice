@@ -143,13 +143,13 @@ template <typename TKey, typename TData>
 void TList<TKey, TData>::InsertBefore(TKey key_b, TKey key_, const TData* pData_)
 {
     if (pFirst == nullptr) return;
-    if (pFirst->key == key_b)
+    if (pFirst->Key == key_b)
     {
         InsertToStart(key_, pData_);
         return;
     }
     TNode<TKey, TData>* prev_node = pFirst;
-    while ((prev_node->pNext != nullptr) && (prev_node->pNext->key != key_b))
+    while ((prev_node->pNext != nullptr) && (prev_node->pNext->Key != key_b))
     {
         prev_node = prev_node->pNext;
     }
@@ -167,7 +167,7 @@ void TList<TKey, TData>::InsertAfter(TKey key_a, TKey key_, const TData* pData_)
 {
     if (pFirst == nullptr) return;
     TNode<TKey, TData>* prev_node = pFirst;
-    while ((prev_node != nullptr) && (prev_node->key != key_a))
+    while ((prev_node != nullptr) && (prev_node->Key != key_a))
     {
         prev_node = prev_node->pNext;
     }
@@ -185,7 +185,7 @@ template <typename TKey, typename TData>
 void TList<TKey, TData>::Remove(TKey key_)
 {
     if (pFirst == nullptr) return;
-    if (pFirst->key == key_)
+    if (pFirst->Key == key_)
     {
         TNode<TKey, TData>* next_node = pFirst->pNext;
         if (pCurrent == pFirst) pCurrent = nullptr;
@@ -196,7 +196,7 @@ void TList<TKey, TData>::Remove(TKey key_)
         return;
     }
     TNode<TKey, TData>* prev_node = pFirst;
-    while ((prev_node->pNext != nullptr) && (prev_node->pNext->key != key_))
+    while ((prev_node->pNext != nullptr) && (prev_node->pNext->Key != key_))
     {
         prev_node = prev_node->pNext;
     }
