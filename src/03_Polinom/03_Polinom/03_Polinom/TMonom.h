@@ -17,7 +17,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const TMonom& monom);
 
-    friend TMonom operator-(const TMonom& temp);
+    TMonom operator-() const;
 };
 
 TMonom::TMonom(unsigned key_, const double* pData_) : TNode<unsigned, double>(key_, pData_)
@@ -81,9 +81,9 @@ std::ostream& operator<<(std::ostream& out, const TMonom& monom)
     return out;
 }
 
-TMonom operator-(const TMonom& temp)
+TMonom TMonom::operator-() const
 {
-    TMonom out(temp.key, -*(temp.pData));
+    TMonom out(key, -*(pData));
     return out;
 }
 #endif

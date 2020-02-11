@@ -12,7 +12,7 @@ int main()
         std::cout << "Enter the second polynom:" << std::endl;
         std::cin >> second;
     }
-    catch (exception& e)
+    catch (const exception& e)
     {
         cout << e.what() << endl;
     }
@@ -26,7 +26,7 @@ int main()
     {
         std::cout << first * second << std::endl;
     }
-    catch (exception& e)
+    catch (const exception& e)
     {
         cout << e.what() << endl;
     }

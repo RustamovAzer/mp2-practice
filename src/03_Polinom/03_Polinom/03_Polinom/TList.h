@@ -42,7 +42,6 @@ public:
 
     friend class TPolynom;
     friend ostream& operator<<(ostream& out, const TPolynom& polynom);
-    friend TPolynom operator-(TPolynom temp);
 };
 
 template <typename TKey, typename TData>
@@ -292,6 +291,7 @@ void TList<TKey, TData>::Next()
         pNext = nullptr;
     }
 }
+
 
 template <typename TKey, typename TData>
 ostream& operator<<(ostream& out, const TList<TKey, TData>& list)
