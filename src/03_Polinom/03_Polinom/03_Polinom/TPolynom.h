@@ -49,16 +49,7 @@ TPolynom::TPolynom()
 
 TPolynom::TPolynom(const TList<unsigned, double>& list_)
 {
-
     list = new TList<unsigned, double>(list_);
-
-    //list = new TList<unsigned, double>;
-    //TNode<unsigned, double>* iter = list_.pFirst;
-    //while (iter != nullptr)
-    //{
-    //    *this += (TMonom)*iter;
-    //    iter = iter->pNext;
-    //}
 }
 
 TPolynom::TPolynom(const TPolynom& temp)
@@ -134,55 +125,6 @@ TPolynom& TPolynom::operator+=(const TPolynom& temp)
 {
     TPolynom copy = *this;
     *this = copy + temp;
-
-    /*TNode<unsigned, double>* first = list->pFirst;
-    TNode<unsigned, double>* second = temp.list->pFirst;
-    if (first == nullptr)
-    {
-        delete list;
-        list = new TList<unsigned, double>(*(temp.list));
-        return *this;
-    }
-    if (second == nullptr)
-    {
-        return *this;
-    }
-    if (first->key < second->key) 
-    {
-        list->InsertToStart(second->key, second->pData);
-        first = list->pFirst;
-        second = second->pNext;
-    }
-    while (second != nullptr)
-    {
-        if (first->pNext == nullptr)
-        {
-            first->pNext = new TMonom(*(second));
-            first = first->pNext;
-            second = second->pNext;
-        }
-        else if (first->pNext->key > second->key)
-        {
-            first = first->pNext;
-        }
-        else if (first->pNext->key < second->key)
-        {
-            TNode<unsigned, double>* temp = new TMonom(*(second));
-            temp->pNext = first->pNext;
-            first->pNext = temp;
-            first = first->pNext;
-            second = second->pNext;
-        }
-        else
-        {
-            if (*(first->pNext->pData) != -*(second->pData))
-                *(first->pNext->pData) += *(second->pData);
-            else
-                list->Remove(first->pNext->key);
-            second = second->pNext;
-        }
-    }*/
-
     return *this;
 }
 
@@ -231,27 +173,6 @@ TPolynom& TPolynom::operator+=(const TMonom& node)
 
     TPolynom copy = *this;
     *this = copy + node;
-
-    /*TNode<unsigned, double>* first = list->pFirst;
-    if (first == nullptr || node.key > first->key)
-    {
-        list->InsertToStart(node.key, node.pData);
-        return *this;
-    }
-    while ((first->pNext != nullptr) && (first->pNext->key > node.key))
-        first = first->pNext;
-    if ((first->pNext != nullptr) && (first->pNext->key == node.key))
-    {
-        if (*(first->pNext->pData) != -*(node.pData))
-            *(first->pNext->pData) += *(node.pData);
-        else
-            list->Remove(first->pNext->key);
-        return *this;
-    }
-    TNode<unsigned, double>* temp = new TNode<unsigned, double>(node);
-    temp->pNext = first->pNext;
-    first->pNext = temp;*/
-
     return *this;
 }
 
@@ -277,17 +198,26 @@ TPolynom& TPolynom::operator-=(const TMonom& node)
 
 TPolynom TPolynom::operator*(const TPolynom& temp)
 {
-    TPolynom out;
+    TPolynom out, tmpres;
     TNode<unsigned, double>* second = temp.list->pFirst;
     if (second == nullptr)
     {
         return out;
     }
+
+    tmpres = *this * *second;
+    out = tmpres;
+    second = second->pNext;
+
     while (second != nullptr)
     {
-        out = out + ((*this) * (*second));
+        tmpres = *this * *second;
+        out += tmpres;
         second = second->pNext;
     }
+
+    
+
     return out;
 }
 

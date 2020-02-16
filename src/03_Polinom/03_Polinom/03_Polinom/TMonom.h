@@ -58,7 +58,7 @@ TMonom TMonom::operator*(const TMonom& temp)
 }
 
 
-std::ostream& operator<<(std::ostream& out, const TMonom& monom)
+std::ostream& operator<<(std::ostream& out, const TMonom& monom) 
 {
     if (*(monom.pData) > 0)
         out << "+";
