@@ -100,11 +100,11 @@ std::ostream& operator<<(std::ostream& out, const TGraph& _graph)
 {
     out << "Vertices: [ ";
     for (int i = 0; i < _graph.verticesCount; i++)
-        out << _graph.vertices[i] << " ";
+        out <<"(" <<_graph.vertices[i] << ") ";
     out << "]" << std::endl;
     out << "Edges: [ ";
     for (int i = 0; i < _graph.edgesCount; i++)
-        out << "(" << _graph.edges[i].startVertex << " " << _graph.edges[i].endVertex << ") ";
+        out << "(" << _graph.edges[i].startVertex << "-" << _graph.edges[i].endVertex << ") ";
     //<< " " << _graph.edges[i].weight << ") ";
     out << "]" << std::endl;
     return out;

@@ -138,11 +138,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithms.h" />
     <ClInclude Include="TDHeap.h" />
     <ClInclude Include="TDisjointSet.h" />
     <ClInclude Include="TGraph.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Algorithms.cpp" />
     <ClCompile Include="TDisjointSet.cpp" />
     <ClCompile Include="TGraph.cpp" />
   </ItemGroup>
