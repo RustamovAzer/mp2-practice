@@ -18,4 +18,3 @@ public:
 };
 
 #endif // !__ALGORITHMS__H__
-

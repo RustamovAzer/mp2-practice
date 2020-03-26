@@ -1,4 +1,6 @@
 #include "TGraph.h"
+#include <exception>
+
 
 TGraph::TGraph(int _verticesCount, int* _vertices)
 {
@@ -45,7 +47,7 @@ void TGraph::addNewEdge(const TEdge& _newEdge)
 {
     int maxCountOfEdges = verticesCount * (verticesCount - 1) / 2;
     if (edgesCount + 1 > maxCountOfEdges)
-        ;//exception
+        throw std::exception("Incorrect number of edges");
     if (!isEdgeInGraph(_newEdge))
         edges[edgesCount++] = _newEdge;
 }
@@ -100,12 +102,44 @@ std::ostream& operator<<(std::ostream& out, const TGraph& _graph)
 {
     out << "Vertices: [ ";
     for (int i = 0; i < _graph.verticesCount; i++)
-        out <<"(" <<_graph.vertices[i] << ") ";
+        out << _graph.vertices[i] << " ";
     out << "]" << std::endl;
     out << "Edges: [ ";
     for (int i = 0; i < _graph.edgesCount; i++)
-        out << "(" << _graph.edges[i].startVertex << "-" << _graph.edges[i].endVertex << ") ";
+        out << "(" << _graph.edges[i].startVertex << " " << _graph.edges[i].endVertex << ") ";
     //<< " " << _graph.edges[i].weight << ") ";
     out << "]" << std::endl;
     return out;
 }
+
+int* TGraph::getAdjacencyMatrix()
+{
+    int* adjacencyMatrix = new int[verticesCount * verticesCount];
+    for (int k = 0; k < verticesCount * verticesCount; k++)
+        adjacencyMatrix[k] = 0;
+
+    for (int i = 0; i < edgesCount; i++)
+    {
+        TEdge currentEdge = edges[i];
+        int startVertex = currentEdge.startVertex;
+        int endVertex = currentEdge.endVertex;
+        adjacencyMatrix[startVertex * verticesCount + endVertex] = currentEdge.weight;
+        adjacencyMatrix[endVertex * verticesCount + startVertex] = currentEdge.weight;
+    }
+
+    return adjacencyMatrix;
+}
+
+void TGraph::printAdjacencyMatrix()
+{
+    int* adjacencyMatrix = getAdjacencyMatrix();
+
+    for (int i = 0; i < verticesCount; i++)
+    {
+        for (int j = 0; j < verticesCount; j++)
+            std::cout << adjacencyMatrix[i * verticesCount + j] << " ";
+        std::cout << std::endl;
+    }
+
+    delete[] adjacencyMatrix;
+};

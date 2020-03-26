@@ -39,6 +39,9 @@ public:
     void addNewEdge(const TEdge& _newEdge);
     bool isEdgeInGraph(const TEdge& _edge);
 
+    int* getAdjacencyMatrix();
+    void printAdjacencyMatrix();
+
     friend std::ostream& operator<<(std::ostream& out, const TGraph& _graph);
 
 };
